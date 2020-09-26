@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectServiceImpl implements IProjectService {
     @Override
-    public ResponseEntity<?> addProject(ProjectAdd projectAdd, String creatorEmail) {
+    public ResponseEntity<?> addProject(ProjectAdd projectAdd, String loggedInEmail) {
         return null;
     }
 
     @Override
-    public ResponseEntity<?> updateProject(ProjectUpdate projectUpdate, String creatorEmail) {
+    public ResponseEntity<?> updateProject(ProjectUpdate projectUpdate, String loggedInEmail) {
         return null;
     }
 

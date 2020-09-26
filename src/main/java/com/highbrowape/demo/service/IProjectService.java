@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IProjectService {
 
-    ResponseEntity<?>  addProject(ProjectAdd projectAdd, String creatorEmail);
-    ResponseEntity<?>  updateProject(ProjectUpdate projectUpdate, String creatorEmail);
+    ResponseEntity<?>  addProject(ProjectAdd projectAdd, String loggedInEmail);
+    ResponseEntity<?>  updateProject(ProjectUpdate projectUpdate, String loggedInEmail);
 
 }
