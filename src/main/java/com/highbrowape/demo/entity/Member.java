@@ -25,6 +25,9 @@ public class Member {
     @GeneratedValue
     long id;
 
+    @Column(nullable = false)
+    String email;
+
     @Enumerated(EnumType.STRING)
     Authority authority;
 
