@@ -9,8 +9,6 @@ import com.highbrowape.demo.entity.Project;
 import com.highbrowape.demo.repository.ProjectRepository;
 import com.highbrowape.demo.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,12 +39,19 @@ public class ProjectController {
 
     }
 
+    @GetMapping("/created/list/{pageNumber}")
+    public ResponseEntity<ProjectListDto>  getMyCreatedProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
+
+        return projectService.getMyCreatedProjectList(pageNumber,principal.getName());
+
+    }
     @GetMapping("/list/{pageNumber}")
     public ResponseEntity<ProjectListDto>  getProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
 
         return projectService.getProjectList(pageNumber,principal.getName());
 
     }
+
 
     @GetMapping("/dashboard/{id}")
     public  ResponseEntity<ProjectDashboardDto> getProjectDashboard(@PathVariable("id")Long id, Principal principal){

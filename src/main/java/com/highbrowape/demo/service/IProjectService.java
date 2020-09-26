@@ -16,5 +16,5 @@ public interface IProjectService {
     ResponseEntity<ProjectDashboardDto>  getProjectDashboard(Long projectId, String loggedInEmail);
     ResponseEntity<ProjectListDto> getProjectList(int pageNumber, String loggedInEmail);
     ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail);
-
+    ResponseEntity<ProjectListDto> getMyCreatedProjectList(int pageNumber, String loggedInEmail);
 }

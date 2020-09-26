@@ -13,6 +13,8 @@ public class ProjectAdd {
 
     String projectName;
 
+    int projectId;
+
     String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
