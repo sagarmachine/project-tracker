@@ -25,7 +25,7 @@ public class ProjectAdd {
     Date endingDate;
 
 
-    List<String> members;
+    List<ProjectMemberDto> members;
 
 
 
