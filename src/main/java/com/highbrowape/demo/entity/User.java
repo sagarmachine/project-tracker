@@ -29,6 +29,10 @@ public class User {
     @Column(nullable = false)
     String lastName;
 
+    @Column(nullable = false)
+     String password;
+
+
     byte[] image;
 
     String imageLink;
