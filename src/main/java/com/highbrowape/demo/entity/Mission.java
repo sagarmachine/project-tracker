@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -52,6 +53,7 @@ public class Mission {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     Mission missionParent;
 
     @OneToMany(mappedBy = "missionParent",cascade = {CascadeType.ALL})
@@ -59,6 +61,7 @@ public class Mission {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     Project project;
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})

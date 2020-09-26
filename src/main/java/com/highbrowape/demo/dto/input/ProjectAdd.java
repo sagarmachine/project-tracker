@@ -1,10 +1,7 @@
-package com.highbrowape.demo.dto;
+package com.highbrowape.demo.dto.input;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.highbrowape.demo.entity.Member;
-import com.highbrowape.demo.entity.Mission;
-import com.highbrowape.demo.entity.User;
 import lombok.Data;
 
 import java.util.Date;

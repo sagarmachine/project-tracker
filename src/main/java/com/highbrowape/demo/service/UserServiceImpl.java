@@ -1,7 +1,7 @@
 package com.highbrowape.demo.service;
 
-import com.highbrowape.demo.dto.UserLogin;
-import com.highbrowape.demo.dto.UserRegister;
+import com.highbrowape.demo.dto.input.UserLogin;
+import com.highbrowape.demo.dto.input.UserRegister;
 import com.highbrowape.demo.entity.User;
 import com.highbrowape.demo.exception.InvalidCredentials;
 import com.highbrowape.demo.exception.UserAlreadyExist;
@@ -22,8 +22,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Optional;
 
 

@@ -1,5 +1,6 @@
 package com.highbrowape.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,5 +33,6 @@ public class Objective {
 
     @ManyToOne
     @JoinColumn
+    @JsonIgnore
     Mission mission;
 }

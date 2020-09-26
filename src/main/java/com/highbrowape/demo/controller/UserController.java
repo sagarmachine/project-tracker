@@ -1,8 +1,8 @@
 package com.highbrowape.demo.controller;
 
 
-import com.highbrowape.demo.dto.UserLogin;
-import com.highbrowape.demo.dto.UserRegister;
+import com.highbrowape.demo.dto.input.UserLogin;
+import com.highbrowape.demo.dto.input.UserRegister;
 import com.highbrowape.demo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

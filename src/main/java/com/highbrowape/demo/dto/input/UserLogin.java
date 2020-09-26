@@ -1,4 +1,4 @@
-package com.highbrowape.demo.dto;
+package com.highbrowape.demo.dto.input;
 
 
 import lombok.Data;
