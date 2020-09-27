@@ -190,7 +190,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        int totalPages=(int)Math.ceil(projectRepository.findAll().size()/2);
+        int totalPages=(int)Math.ceil(projectRepository.findByUserEmail(loggedInEmail).size()/2);
         Pageable pageable = PageRequest.of(pageNumber, 2);
         List<Project> projects= projectRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
@@ -211,8 +211,25 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<ProjectListDto> getProjectList(int pageNumber, String loggedInEmail) {
-        return null;
+    public ResponseEntity<?> getProjectList(int pageNumber, String loggedInEmail) {
+
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        int totalPages=(int)Math.ceil(memberRepository.findDistinctByEmail(loggedInEmail).size()/2);
+        Pageable pageable = PageRequest.of(pageNumber, 2);
+        List<Member> members= memberRepository.findDistinctByEmail(loggedInEmail,pageable);
+        List<ProjectListDto> projectList=new ArrayList<>();
+
+        for(Member m:members){
+            Project p=m.getProject();
+            ProjectListDto project= mapper.map(p, ProjectListDto.class);
+            projectList.add(project);
+        }
+        HashMap<String,Object> result = new HashMap<>();
+        result.put("totalPages",new Integer(totalPages));
+        result.put("data",projectList);
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
     public boolean isValidUser(String email) {
