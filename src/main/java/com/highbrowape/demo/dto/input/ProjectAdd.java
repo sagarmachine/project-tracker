@@ -13,7 +13,7 @@ public class ProjectAdd {
 
     String projectName;
 
-    int projectId;
+    long projectId;
 
     String description;
 
@@ -24,7 +24,7 @@ public class ProjectAdd {
     Date endingDate;
 
 
-    List<ProjectMemberDto> members;
+    List<ProjectMemberDto> member;
 
 
 

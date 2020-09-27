@@ -52,7 +52,7 @@ public class Project {
     @JsonIgnore
     User user;
 
-    @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     List<Member> members;
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL})
