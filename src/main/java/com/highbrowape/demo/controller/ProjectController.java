@@ -40,13 +40,13 @@ public class ProjectController {
     }
 
     @GetMapping("/created/list/{pageNumber}")
-    public ResponseEntity<ProjectListDto>  getMyCreatedProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
+    public ResponseEntity<?>  getMyCreatedProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
 
         return projectService.getMyCreatedProjectList(pageNumber,principal.getName());
 
     }
     @GetMapping("/list/{pageNumber}")
-    public ResponseEntity<ProjectListDto>  getProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
+    public ResponseEntity<?>  getProjectList(@PathVariable("pageNumber")int pageNumber, Principal principal){
 
         return projectService.getProjectList(pageNumber,principal.getName());
 
@@ -54,7 +54,7 @@ public class ProjectController {
 
 
     @GetMapping("/dashboard/{id}")
-    public  ResponseEntity<ProjectDashboardDto> getProjectDashboard(@PathVariable("id")Long id, Principal principal){
+    public  ResponseEntity<?> getProjectDashboard(@PathVariable("id")Long id, Principal principal){
         return projectService.getProjectDashboard(id,principal.getName());
     }
 
