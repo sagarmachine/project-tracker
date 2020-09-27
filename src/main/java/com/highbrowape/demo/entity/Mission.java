@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class Mission {
     long level;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @CreationTimestamp
     Date addedOn;
 
     @Column(nullable = false)
