@@ -24,8 +24,10 @@ public class ProjectAdd {
     Date endingDate;
 
 
+    List<NoteDto> notes;
+
+    List<LinkDto> links;
+
     List<ProjectMemberDto> member;
-
-
 
 }

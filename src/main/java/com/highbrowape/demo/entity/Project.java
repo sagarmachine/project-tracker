@@ -10,7 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @Getter
@@ -53,10 +53,40 @@ public class Project {
     User user;
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
-    List<Member> members;
+    Set<Member> members= new HashSet<>();
+
+    @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    Set<ProjectLink> projectLinks= new HashSet<>();
+
+    @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    Set<ProjectNote> projectNotes= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL})
-    List<Mission> missions;
+    Set<Mission> missions= new HashSet<>();
+
+
+
+    public void addMember(Member member){
+        members.add(member);
+        member.setProject(this);
+    }
+
+    public void addLink(ProjectLink projectLink){
+        projectLinks.add(projectLink);
+        projectLink.setProject(this);
+    }
+    public void addNote(ProjectNote projectNote){
+        projectNotes.add(projectNote);
+        projectNote.setProject(this);
+    }
+    public void addMission(Mission mission){
+        missions.add(mission);
+        mission.setProject(this);
+    }
+
+
+
+
 
 
 }
