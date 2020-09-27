@@ -1,0 +1,32 @@
+package com.highbrowape.demo.dto.input;
+
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.highbrowape.demo.entity.Category;
+import com.highbrowape.demo.entity.Priority;
+import lombok.Data;
+
+import java.util.Date;
+
+
+@Data
+public class MissionAddDto {
+
+    String name;
+
+    String missionId;
+
+    String description;
+
+    Priority priority;
+
+    Category category;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date startingDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date endingDate;
+
+
+}

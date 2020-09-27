@@ -52,6 +52,12 @@ public class Mission {
     @Enumerated(EnumType.STRING)
     Category category;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date startingDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date endingDate;
+
 
     @ManyToOne
     @JoinColumn
