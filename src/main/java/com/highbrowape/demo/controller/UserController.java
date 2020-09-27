@@ -3,15 +3,18 @@ package com.highbrowape.demo.controller;
 
 import com.highbrowape.demo.dto.input.UserLogin;
 import com.highbrowape.demo.dto.input.UserRegister;
+import com.highbrowape.demo.repository.UserRepository;
 import com.highbrowape.demo.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/v1/user/")
@@ -20,6 +23,9 @@ public class UserController {
 
     @Autowired
     IUserService userService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @PostMapping("/register")
      public ResponseEntity<?> register(@Valid @RequestBody UserRegister userRegister){
@@ -30,6 +36,29 @@ public class UserController {
     public  ResponseEntity<?>  authenticate(@Valid @RequestBody UserLogin userLogin){
 
         return userService.authenticateUser(userLogin);
+    }
+
+    @GetMapping("/{search}/{pageNumber}")
+    public ResponseEntity<?> getUsers(@PathVariable("search")String search, @PathVariable("pageNumber")int pageNumber){
+
+        search= search.trim();
+
+          Pageable pageable= PageRequest.of(pageNumber,2 , Sort.by(Sort.Direction.DESC,"addedOn"));
+          HashMap<String, Object> result= new HashMap<>();
+
+
+        if(!search.contains(" ")) {
+           result.put("content",userRepository.findEmailBySearch(search, pageable));
+           result.put("totalPages",userRepository.countEmailBySearch(search));
+        }
+           else {
+            result.put("content", userRepository.findEmailByName(search.substring(0, search.indexOf(" ")), search.substring(search.indexOf(" ") + 1), pageable));
+            result.put("totalPages",userRepository.countEmailByName(search.substring(0, search.indexOf(" ")), search.substring(search.indexOf(" ") + 1)));
+
+        }
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+
     }
 
 }

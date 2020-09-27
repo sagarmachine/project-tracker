@@ -70,6 +70,8 @@ public class UserServiceImpl implements IUserService {
         User user = mapper.map(userRegister,User.class);
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setFirstName(user.getLastName());
+
 
           user= userRepository.save(user);
 
