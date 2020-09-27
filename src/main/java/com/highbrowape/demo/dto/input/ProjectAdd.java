@@ -13,7 +13,7 @@ public class ProjectAdd {
 
     String projectName;
 
-    long projectId;
+    String projectId;
 
     String description;
 
