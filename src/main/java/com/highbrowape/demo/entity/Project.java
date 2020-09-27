@@ -25,7 +25,7 @@ public class Project {
     long id;
 
     @Column(nullable = false,unique=true)
-    long projectId;
+    String projectId;
 
     @Column(nullable = false)
     String projectName;
@@ -83,10 +83,6 @@ public class Project {
         missions.add(mission);
         mission.setProject(this);
     }
-
-
-
-
 
 
 
