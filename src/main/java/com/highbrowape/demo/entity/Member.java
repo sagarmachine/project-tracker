@@ -34,10 +34,10 @@ public class Member {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
-    @Column(nullable = false)
+
     String addedBy;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     @JoinColumn
     @JsonIgnore
     Project project;

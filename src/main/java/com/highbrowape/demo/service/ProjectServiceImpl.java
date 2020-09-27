@@ -13,6 +13,7 @@ import com.highbrowape.demo.entity.User;
 import com.highbrowape.demo.exception.InvalidAuthorityException;
 import com.highbrowape.demo.exception.ProjectAlreadyExistException;
 import com.highbrowape.demo.exception.ProjectNotFoundException;
+import com.highbrowape.demo.exception.UserNotFoundException;
 import com.highbrowape.demo.repository.MemberRepository;
 import com.highbrowape.demo.repository.ProjectRepository;
 import com.highbrowape.demo.repository.UserRepository;
@@ -24,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
@@ -49,29 +52,35 @@ public class ProjectServiceImpl implements IProjectService {
             user = optionalUser.get();
             Optional<Project> projectOptional = projectRepository.findByUserAndProjectId(user, projectAdd.getProjectId());
             if (projectOptional.isPresent())
-                throw new ProjectAlreadyExistException("Project With id " + projectAdd.getProjectId() + " already exist ");
+                throw new ProjectAlreadyExistException("Project with id-- " + projectAdd.getProjectId() + " already exist ");
 
         }
+        else throw new UserNotFoundException("User with email "+loggedInEmail+ " not found ");
         project.setUser(user);
 
         try {
             project = projectRepository.save(project);
         } catch (DataIntegrityViolationException exception) {
-            throw new ProjectAlreadyExistException("Project With id " + projectAdd.getProjectId() + " already exist ");
+            throw new ProjectAlreadyExistException("Project With projectId " + projectAdd.getProjectId() + " already exist ");
         }
-        for (ProjectMemberDto pmd : projectAdd.getMembers()) {
-            if (isValidUser(pmd.getEmail())) {
-                Optional<Member> optionalMember2= memberRepository.findByProjectAndEmail(project,pmd.getEmail());
-                if(optionalMember2.isPresent()) continue;
-                Member member = mapper.map(pmd, Member.class);
-                member.setAddedBy(user.getEmail());
-                member.setAddedOn(new java.util.Date());
-                member.setProject(project);
-                memberRepository.save(member);
+
+
+        if(projectAdd.getMember()!=null) {
+            for (ProjectMemberDto pmd : projectAdd.getMember()) {
+                if (isValidUser(pmd.getEmail())) {
+                    Optional<Member> optionalMember2 = memberRepository.findByProjectAndEmail(project, pmd.getEmail());
+                    if (optionalMember2.isPresent()) continue;
+                    Member member = mapper.map(pmd, Member.class);
+                    member.setAddedBy(loggedInEmail);
+                    member.setAddedOn(new java.util.Date());
+                    member.setProject(project);
+                    memberRepository.save(member);
+                }
             }
         }
 
-        return new ResponseEntity<>(project, HttpStatus.ACCEPTED);
+
+        return new ResponseEntity<>(projectRepository.findById(project.getId()).get(), HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -86,27 +95,38 @@ public class ProjectServiceImpl implements IProjectService {
         if(!optionalMember.isPresent())
             throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
-        if(optionalMember.get().getAuthority().equals(Authority.CREATOR)||optionalMember.get().getAuthority().equals(Authority.CHIEF)) {
 
-            for (ProjectMemberDto pmd : projectUpdate.getMembers()) {
+        if(optionalMember.get().getAuthority()==Authority.CREATOR||optionalMember.get().getAuthority()==Authority.CHIEF) {
+            ModelMapper mapper = new ModelMapper();
+            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+             project = mapper.map(projectUpdate, Project.class);
+
+            try {
+                project = projectRepository.save(project);
+
+            } catch (DataIntegrityViolationException exception) {
+                throw new ProjectAlreadyExistException("Project With projectId " + projectUpdate.getProjectId() + " already exist ");
+            }
+
+            for (ProjectMemberDto pmd : projectUpdate.getMember()) {
                 if (isValidUser(pmd.getEmail())) {
 
                     Optional<Member> optionalMember2= memberRepository.findByProjectAndEmail(project,pmd.getEmail());
                     if(optionalMember2.isPresent()) continue;
-                    ModelMapper mapper = new ModelMapper();
-                    mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
                     Member member = mapper.map(pmd, Member.class);
                     member.setAddedBy(loggedInEmail);
                     member.setAddedOn(new java.util.Date());
                     member.setProject(project);
                     memberRepository.save(member);
+
+
                 }
             }
 
         }
         else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
-        return new ResponseEntity<>(project, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(projectRepository.findById(project.getId()).get(), HttpStatus.OK);
     }
 
     public boolean isValidUser(String email) {
