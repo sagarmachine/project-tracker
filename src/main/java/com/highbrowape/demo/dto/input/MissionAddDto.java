@@ -7,6 +7,7 @@ import com.highbrowape.demo.entity.Priority;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -27,6 +28,13 @@ public class MissionAddDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date endingDate;
+
+
+    List<NoteDto> notes;
+
+    List<LinkDto> links;
+
+    List<ProjectMemberDto> member;
 
 
 }
