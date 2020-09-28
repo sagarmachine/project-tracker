@@ -245,6 +245,7 @@ public class ProjectServiceImpl implements IProjectService {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
+
     @Override
     public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
@@ -299,5 +300,57 @@ public class ProjectServiceImpl implements IProjectService {
         if (optionalUser.isPresent()) return true;
         return false;
     }
+
+
+
+    @Override
+    public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> updateMemberAuthorityToProject(Long id, Authority authority, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeMemberFromProject(Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> updateNoteOfProject(Long id, NoteDto noteDto, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeNoteFromProject(Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addLinkToProject(Long id, LinkDto linkDto, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> updateLinkOfProject(Long id, LinkDto linkDto, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeLinkFromProject(Long id, String loggedInEmail) {
+        return null;
+    }
+
+
+
+
+
 
 }
