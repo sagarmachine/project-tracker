@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Data
 @Entity
@@ -39,4 +40,17 @@ public class ProjectNote {
     @JsonIgnore
     Project project;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProjectNote)) return false;
+        ProjectNote that = (ProjectNote) o;
+        return getId() == that.getId() &&
+                Objects.equals(getProject(), that.getProject());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getProject());
+    }
 }

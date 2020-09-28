@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -30,6 +31,8 @@ public class Member {
     @JoinColumn
     @JsonIgnore
     User user;
+
+    String email;
 
     @Enumerated(EnumType.STRING)
     Authority authority;
@@ -58,6 +61,20 @@ public class Member {
         this.user=user;
         this.authority=authority;
         this.addedOn=addedOn;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Member)) return false;
+        Member member = (Member) o;
+        return getId() == member.getId() &&
+                Objects.equals(getProject(), member.getProject());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getProject());
     }
 }
 

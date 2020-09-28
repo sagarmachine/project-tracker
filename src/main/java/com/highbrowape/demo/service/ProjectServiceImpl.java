@@ -60,6 +60,7 @@ public class ProjectServiceImpl implements IProjectService {
             throw new ProjectAlreadyExistException("Project With projectId " + projectAdd.getProjectId() + " already exist ");
         }
         Member member=new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
+        member.setEmail(loggedInEmail);
         project.addMember(member);
         memberRepository.save(member);
 
@@ -303,7 +304,7 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
-        if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
         Optional<Project> projectOptional = projectRepository.findById(id);
 
 
@@ -380,6 +381,8 @@ public class ProjectServiceImpl implements IProjectService {
 
         if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
         {
+
+            project.getMembers().remove(member);
             memberRepository.delete(member);
 
         }
@@ -454,10 +457,13 @@ public class ProjectServiceImpl implements IProjectService {
         if (!projectNoteOptional.isPresent()) throw new ProjectNoteNotFoundException("No project note found with id  " + id);
 
         ProjectNote projectNote = projectNoteOptional.get();
+        Project project= projectNote.getProject();
         Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(projectNote.getProject(), loggedInEmail);
         if (!optionalMember.isPresent())
             throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
         try {
+
+            project.getProjectNotes().remove(projectNote);
             projectNoteRepository.delete(projectNote);
         }catch(Exception ex) {
             throw new ProjectNoteNotFoundException("No project note found with id  " + id);
@@ -466,7 +472,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
 
-        return new ResponseEntity<>("Link deleted successfully",HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("PROJECT NOTE DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
     }
 
@@ -533,19 +539,23 @@ public class ProjectServiceImpl implements IProjectService {
         if (!projectLinkOptional.isPresent()) throw new ProjectLinkNotFoundException("No project link found with id  " + id);
 
         ProjectLink projectLink = projectLinkOptional.get();
+        Project project=projectLink.getProject();
         Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(projectLink.getProject(), loggedInEmail);
         if (!optionalMember.isPresent())
             throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
         try {
+            project.getProjectLinks().remove(projectLink);
             projectLinkRepository.delete(projectLink);
+
+
         }catch(Exception ex) {
             throw new ProjectLinkNotFoundException("No project link found with id  " + id);
         }
 
 
 
-        return new ResponseEntity<>("Link deleted successfully",HttpStatus.ACCEPTED);
+        return new ResponseEntity<>("LINK DELETED SUCCESSFULLY ",HttpStatus.ACCEPTED);
     }
 
 
