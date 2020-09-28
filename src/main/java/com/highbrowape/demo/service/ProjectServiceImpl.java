@@ -80,6 +80,7 @@ public class ProjectServiceImpl implements IProjectService {
                     member1.setProject(project);
                     member1.setUser(user1);
                     project.addMember(member1);
+                    userRepository.save(user1);
                     memberRepository.save(member1);
                 }
             }
@@ -110,7 +111,7 @@ public class ProjectServiceImpl implements IProjectService {
         }
 
 
-        return new ResponseEntity<>(projectRepository.findById(project.getId()).get(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(projectRepository.save(project), HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -122,6 +123,7 @@ public class ProjectServiceImpl implements IProjectService {
             throw new ProjectNotFoundException("No Project Found with id " + projectUpdate.getId());
         Project project = projectOptional.get();
         User user=project.getUser();
+        Date date=project.getAddedOn();
 
 
         Optional<Member> optionalMember= memberRepository.findByProjectAndUserEmail(project,loggedInEmail);
@@ -135,6 +137,7 @@ public class ProjectServiceImpl implements IProjectService {
              project = mapper.map(projectUpdate, Project.class);
              project.setId(project.getId());
              project.setUser(user);
+             project.setAddedOn(date);
             project.setProjectId(projectUpdate.getProjectId().toUpperCase());
 
 
@@ -146,6 +149,7 @@ public class ProjectServiceImpl implements IProjectService {
                 throw new ProjectAlreadyExistException("Project With projectId " + projectUpdate.getProjectId() + " already exist ");
             }
 
+            memberRepository.deleteAllByProjectId(projectUpdate.getId());
             Member member1 =new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
             //project.addMember(member1);
             memberRepository.save(member1);
@@ -163,6 +167,7 @@ public class ProjectServiceImpl implements IProjectService {
                         member.setProject(project);
                         member.setUser(user1);
                         project.addMember(member);
+                        userRepository.save(user1);
                         memberRepository.save(member);
 
 
