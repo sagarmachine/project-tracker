@@ -30,6 +30,10 @@ public class Note {
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
+
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
     @Column(nullable = false)

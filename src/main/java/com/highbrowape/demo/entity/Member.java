@@ -37,7 +37,9 @@ public class Member {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @CreationTimestamp
     Date addedOn;
-
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
 
     String addedBy;
 
