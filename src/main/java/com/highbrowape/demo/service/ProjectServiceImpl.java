@@ -5,10 +5,7 @@ import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.dto.output.ProjectDashboardDto;
 import com.highbrowape.demo.dto.output.ProjectListDto;
 import com.highbrowape.demo.entity.*;
-import com.highbrowape.demo.exception.InvalidAuthorityException;
-import com.highbrowape.demo.exception.ProjectAlreadyExistException;
-import com.highbrowape.demo.exception.ProjectNotFoundException;
-import com.highbrowape.demo.exception.UserNotFoundException;
+import com.highbrowape.demo.exception.*;
 import com.highbrowape.demo.repository.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -227,7 +224,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        int totalPages=(int)Math.ceil(projectRepository.countByUserEmail(loggedInEmail)/2);
+        double totalPages=Math.ceil(projectRepository.countByUserEmail(loggedInEmail)/2);
         Pageable pageable = PageRequest.of(pageNumber, 2);
         List<Project> projects= projectRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
@@ -240,7 +237,7 @@ public class ProjectServiceImpl implements IProjectService {
             projectList.add(project);
         }
         HashMap<String,Object> result = new HashMap<>();
-        result.put("totalPages",new Integer(totalPages));
+        result.put("totalPages",new Double(totalPages));
         result.put("data",projectList);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -275,7 +272,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        int totalPages=(int)Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
+        double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
         Pageable pageable = PageRequest.of(pageNumber, 2);
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
@@ -289,7 +286,7 @@ public class ProjectServiceImpl implements IProjectService {
             projectList.add(project);
         }
         HashMap<String,Object> result = new HashMap<>();
-        result.put("totalPages",new Integer(totalPages));
+        result.put("totalPages",new Double(totalPages));
         result.put("data",projectList);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
@@ -305,48 +302,252 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
-        return null;
-    }
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        Optional<Project> projectOptional = projectRepository.findById(id);
 
+
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
+
+        Project project = projectOptional.get();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
+            {
+                ModelMapper mapper = new ModelMapper();
+                mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+            Optional<Member> optionalMember2 = memberRepository.findByProjectAndUserEmail(project, projectMemberDto.getEmail());
+            if (!optionalMember2.isPresent()) {
+                Member member = mapper.map(projectMemberDto, Member.class);
+                member.setAddedBy(loggedInEmail);
+                member.setAddedOn(new java.util.Date());
+                member.setProject(project);
+                member.setUser(userRepository.findByEmail(projectMemberDto.getEmail()).get());
+                project.addMember(member);
+                memberRepository.save(member);
+
+            }
+
+            }
+
+        else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+    }
     @Override
     public ResponseEntity<?> updateMemberAuthorityToProject(Long id, Authority authority, String loggedInEmail) {
-        return null;
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<Member> memberOptional= memberRepository.findById(id);
+
+        if(!memberOptional.isPresent()) throw new MemberNotFoundException("No member found with member id  "+ id);
+
+        Member member= memberOptional.get();
+        Project project = member.getProject();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
+        {
+            member.setAuthority(authority);
+            memberRepository.save(member);
+
+            }
+
+        else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        return new ResponseEntity<>("Authority Updated",HttpStatus.ACCEPTED);
+
     }
 
     @Override
     public ResponseEntity<?> removeMemberFromProject(Long id, String loggedInEmail) {
-        return null;
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<Member> memberOptional= memberRepository.findById(id);
+
+        if(!memberOptional.isPresent()) throw new MemberNotFoundException("No member found with member id  "+ id);
+
+        Member member= memberOptional.get();
+        Project project = member.getProject();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
+        {
+            memberRepository.delete(member);
+
+        }
+        else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+        return new ResponseEntity<>("MEMBER REMOVED SUCCESSFULLY",HttpStatus.ACCEPTED);
+
     }
+
+
+
 
     @Override
     public ResponseEntity<?> addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        Optional<Project> projectOptional = projectRepository.findById(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
+
+        Project project = projectOptional.get();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+            ModelMapper mapper = new ModelMapper();
+            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectNote note1  = mapper.map(noteDto, ProjectNote.class);
+        note1.setProject(project);
+        note1.setAddedBy(loggedInEmail);
+        note1.setAddedOn(new java.util.Date());
+        project.addNote(note1);
+        projectNoteRepository.save(note1);
+
+
+        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<?> updateNoteOfProject(Long id, NoteDto noteDto, String loggedInEmail) {
-        return null;
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<ProjectNote> projectNoteOptional= projectNoteRepository.findById(id);
+
+        if(!projectNoteOptional.isPresent()) throw new ProjectNoteNotFoundException("No note found with member id  "+ id);
+
+
+        Project project = projectNoteOptional.get().getProject();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectNote note1  = mapper.map(noteDto, ProjectNote.class);
+        note1.setId(id);
+        note1.setProject(project);
+        note1.setAddedBy(loggedInEmail);
+        note1.setAddedOn(projectNoteOptional.get().getAddedOn());
+        projectNoteRepository.save(note1);
+
+
+
+        return new ResponseEntity<>("Note Updated",HttpStatus.ACCEPTED);
+
     }
 
     @Override
     public ResponseEntity<?> removeNoteFromProject(Long id, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        Optional<ProjectNote> projectNoteOptional = projectNoteRepository.findById(id);
+        if (!projectNoteOptional.isPresent()) throw new ProjectNoteNotFoundException("No project note found with id  " + id);
+
+        ProjectNote projectNote = projectNoteOptional.get();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(projectNote.getProject(), loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+        try {
+            projectNoteRepository.delete(projectNote);
+        }catch(Exception ex) {
+            throw new ProjectNoteNotFoundException("No project note found with id  " + id);
+        }
+
+
+
+
+        return new ResponseEntity<>("Link deleted successfully",HttpStatus.ACCEPTED);
+
     }
 
     @Override
     public ResponseEntity<?> addLinkToProject(Long id, LinkDto linkDto, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        Optional<Project> projectOptional = projectRepository.findById(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
+
+        Project project = projectOptional.get();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectLink link  = mapper.map(linkDto, ProjectLink.class);
+        link.setProject(project);
+        link.setAddedBy(loggedInEmail);
+        link.setAddedOn(new java.util.Date());
+        project.addLink(link);
+        projectLinkRepository.save(link);
+
+
+        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<?> updateLinkOfProject(Long id, LinkDto linkDto, String loggedInEmail) {
-        return null;
+
+
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<ProjectLink> projectLinkOptional= projectLinkRepository.findById(id);
+
+        if(!projectLinkOptional.isPresent()) throw new ProjectLinkNotFoundException("No link found with member id  "+ id);
+
+
+        Project project = projectLinkOptional.get().getProject();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectLink link  = mapper.map(linkDto, ProjectLink.class);
+        link.setId(id);
+        link.setProject(project);
+        link.setAddedBy(loggedInEmail);
+        link.setAddedOn(projectLinkOptional.get().getAddedOn());
+        projectLinkRepository.save(link);
+
+
+
+        return new ResponseEntity<>("LINK Updated",HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity<?> removeLinkFromProject(Long id, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        Optional<ProjectLink> projectLinkOptional = projectLinkRepository.findById(id);
+        if (!projectLinkOptional.isPresent()) throw new ProjectLinkNotFoundException("No project link found with id  " + id);
+
+        ProjectLink projectLink = projectLinkOptional.get();
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(projectLink.getProject(), loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+        try {
+            projectLinkRepository.delete(projectLink);
+        }catch(Exception ex) {
+            throw new ProjectLinkNotFoundException("No project link found with id  " + id);
+        }
+
+
+
+        return new ResponseEntity<>("Link deleted successfully",HttpStatus.ACCEPTED);
     }
+
 
 
 
