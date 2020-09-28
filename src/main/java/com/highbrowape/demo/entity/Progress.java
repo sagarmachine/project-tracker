@@ -32,6 +32,10 @@ public class Progress {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
+
     String addedBy;
 
     @ManyToOne

@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query( value="select new com.highbrowape.demo.dto.output.UserList(email,firstName,lastName,addedOn) from User where email like %:firstName% OR firstName like %:firstName% OR lastName like %:lastName% ")
     List<UserList> findEmailByName(String firstName,String lastName, Pageable pageable);
-    @Query(value="select count(email) from User where email like %:firstName% OR firstName like %:firstName% OR lastName like %:lastName% ")
+    @Query(value="select count(email) from User where email like %:firstName% OR (firstName like %:firstName% AND lastName like %:lastName%) ")
     Integer countEmailByName(String firstName,String lastName);
 
 }

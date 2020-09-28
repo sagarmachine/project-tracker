@@ -39,6 +39,10 @@ public class Mission {
     @CreationTimestamp
     Date addedOn;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
+
     @Column(nullable = false)
     String addedBy;
 

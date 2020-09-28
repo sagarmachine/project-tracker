@@ -37,6 +37,10 @@ public class Project {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(nullable = false)
     Date startingDate;

@@ -27,6 +27,10 @@ public class ProjectNote {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date updatedOn;
+
     @Column(nullable = false)
     String addedBy;
 

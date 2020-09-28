@@ -49,11 +49,11 @@ public class UserController {
 
         if(!search.contains(" ")) {
            result.put("content",userRepository.findEmailBySearch(search, pageable));
-           result.put("totalPages",userRepository.countEmailBySearch(search));
+           result.put("totalPages",Math.ceil(userRepository.countEmailBySearch(search)/2.0));
         }
            else {
             result.put("content", userRepository.findEmailByName(search.substring(0, search.indexOf(" ")), search.substring(search.indexOf(" ") + 1), pageable));
-            result.put("totalPages",userRepository.countEmailByName(search.substring(0, search.indexOf(" ")), search.substring(search.indexOf(" ") + 1)));
+            result.put("totalPages",Math.ceil(userRepository.countEmailByName(search.substring(0, search.indexOf(" ")), search.substring(search.indexOf(" ") + 1))/2.0));
 
         }
 
