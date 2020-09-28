@@ -65,7 +65,7 @@ public class ProjectController {
     public ResponseEntity<?>  addMemberToProject(@PathVariable("id")Long id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return null;
     }
-    @PostMapping("/member/{id}/authority/{authority}")
+    @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToProject(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){
         return null;
     }
@@ -81,7 +81,7 @@ public class ProjectController {
     public ResponseEntity<?>  addNoteToProject(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
         return null;
     }
-    @PostMapping("/note/{id}")
+    @PutMapping("/note/{id}")
     public ResponseEntity<?>  updateNoteOfProject(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
         return null;
     }
@@ -98,7 +98,7 @@ public class ProjectController {
     public ResponseEntity<?>  addLinkToProject(@PathVariable("id")Long id, @RequestBody LinkDto linkDto, Principal principal){
         return null;
     }
-    @PostMapping("/link/{id}")
+    @PutMapping("/link/{id}")
     public ResponseEntity<?>  updateLinkOfProject(@PathVariable("id")Long id, @RequestBody LinkDto linkDto,Principal principal){
         return null;
     }
