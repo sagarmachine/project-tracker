@@ -48,32 +48,39 @@ public class ProjectServiceImpl implements IProjectService {
         User user = null;
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
-            Optional<Project> projectOptional = projectRepository.findByUserAndProjectId(user, projectAdd.getProjectId());
+            Optional<Project> projectOptional = projectRepository.findByUserAndProjectId(user, projectAdd.getProjectId().toUpperCase());
             if (projectOptional.isPresent())
                 throw new ProjectAlreadyExistException("Project with id-- " + projectAdd.getProjectId() + " already exist ");
 
         }
         else throw new UserNotFoundException("User with email "+loggedInEmail+ " not found ");
         project.setUser(user);
+        project.setProjectId(projectAdd.getProjectId().toUpperCase());
 
         try {
             project = projectRepository.save(project);
         } catch (DataIntegrityViolationException exception) {
             throw new ProjectAlreadyExistException("Project With projectId " + projectAdd.getProjectId() + " already exist ");
         }
+        Member member=new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
+        project.addMember(member);
+        memberRepository.save(member);
 
 
         if(projectAdd.getMember()!=null) {
             for (ProjectMemberDto pmd : projectAdd.getMember()) {
                 if (isValidUser(pmd.getEmail())) {
-                    Optional<Member> optionalMember2 = memberRepository.findByProjectAndEmail(project, pmd.getEmail());
+                    Optional<User> optional= userRepository.findByEmail(pmd.getEmail());
+                    User user1=optional.get();
+                    Optional<Member> optionalMember2 = memberRepository.findByProjectAndUserEmail(project, pmd.getEmail());
                     if (optionalMember2.isPresent()) continue;
-                    Member member = mapper.map(pmd, Member.class);
-                    member.setAddedBy(loggedInEmail);
-                    member.setAddedOn(new java.util.Date());
-                    member.setProject(project);
-                    project.addMember(member);
-                    memberRepository.save(member);
+                    Member member1 = mapper.map(pmd, Member.class);
+                    member1.setAddedBy(loggedInEmail);
+                    member1.setAddedOn(new java.util.Date());
+                    member1.setProject(project);
+                    member1.setUser(user1);
+                    project.addMember(member1);
+                    memberRepository.save(member1);
                 }
             }
         }
@@ -110,40 +117,56 @@ public class ProjectServiceImpl implements IProjectService {
     public ResponseEntity<?> updateProject(ProjectUpdate projectUpdate, String loggedInEmail) {
         Optional<Project> projectOptional = projectRepository.findById(projectUpdate.getId());
 
+
         if (!projectOptional.isPresent())
             throw new ProjectNotFoundException("No Project Found with id " + projectUpdate.getId());
         Project project = projectOptional.get();
+        User user=project.getUser();
 
-        Optional<Member> optionalMember= memberRepository.findByProjectAndEmail(project,loggedInEmail);
+
+        Optional<Member> optionalMember= memberRepository.findByProjectAndUserEmail(project,loggedInEmail);
         if(!optionalMember.isPresent())
             throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
 
-        if(optionalMember.get().getAuthority()==Authority.CREATOR||optionalMember.get().getAuthority()==Authority.CHIEF) {
+        if(optionalMember.get().getAuthority()==Authority.CREATOR) {
             ModelMapper mapper = new ModelMapper();
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
              project = mapper.map(projectUpdate, Project.class);
+             project.setId(project.getId());
+             project.setUser(user);
+            project.setProjectId(projectUpdate.getProjectId().toUpperCase());
+
+
 
             try {
-                project = projectRepository.save(project);
+                projectRepository.save(project);
 
             } catch (DataIntegrityViolationException exception) {
                 throw new ProjectAlreadyExistException("Project With projectId " + projectUpdate.getProjectId() + " already exist ");
             }
 
-            for (ProjectMemberDto pmd : projectUpdate.getMember()) {
-                if (isValidUser(pmd.getEmail())) {
+            Member member1 =new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
+            //project.addMember(member1);
+            memberRepository.save(member1);
+            if(projectUpdate.getMember()!=null) {
+                for (ProjectMemberDto pmd : projectUpdate.getMember()) {
+                    if (isValidUser(pmd.getEmail())) {
+                        Optional<User> optional = userRepository.findByEmail(pmd.getEmail());
+                        User user1 = optional.get();
 
-                    Optional<Member> optionalMember2= memberRepository.findByProjectAndEmail(project,pmd.getEmail());
-                    if(optionalMember2.isPresent()) continue;
-                    Member member = mapper.map(pmd, Member.class);
-                    member.setAddedBy(loggedInEmail);
-                    member.setAddedOn(new java.util.Date());
-                    member.setProject(project);
-                    project.addMember(member);
-                    memberRepository.save(member);
+                        Optional<Member> optionalMember2 = memberRepository.findByProjectAndUserEmail(project, pmd.getEmail());
+                        if (optionalMember2.isPresent()) continue;
+                        Member member = mapper.map(pmd, Member.class);
+                        member.setAddedBy(loggedInEmail);
+                        member.setAddedOn(new java.util.Date());
+                        member.setProject(project);
+                        member.setUser(user1);
+                        project.addMember(member);
+                        memberRepository.save(member);
 
 
+                    }
                 }
             }
 
@@ -175,14 +198,23 @@ public class ProjectServiceImpl implements IProjectService {
         }
         else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
-        return new ResponseEntity<>(projectRepository.findById(project.getId()).get(), HttpStatus.OK);
+        return new ResponseEntity<>(projectRepository.save(project), HttpStatus.OK);
     }
 
 
 
     @Override
     public ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail) {
-        return null;
+
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<Project> projectOptional=projectRepository.findById(projectId);
+
+        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  "+projectId);
+
+        if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
+
+        Project project=projectOptional.get();
+        return new ResponseEntity<>(project,HttpStatus.OK);
     }
 
     @Override
@@ -190,13 +222,16 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        int totalPages=(int)Math.ceil(projectRepository.findByUserEmail(loggedInEmail).size()/2);
+        int totalPages=(int)Math.ceil(projectRepository.countByUserEmail(loggedInEmail)/2);
         Pageable pageable = PageRequest.of(pageNumber, 2);
         List<Project> projects= projectRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
         for(Project p:projects){
             ProjectListDto project= mapper.map(p, ProjectListDto.class);
+            long totalMembers=(long)memberRepository.countByProject(p);
+            project.setTotalMembers(totalMembers);
+            project.setTotalMissions(p.getMissions().size());
             projectList.add(project);
         }
         HashMap<String,Object> result = new HashMap<>();
@@ -207,7 +242,25 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
-        return null;
+        if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
+        Optional<Project> projectOptional=projectRepository.findById(projectId);
+
+        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  "+projectId);
+
+        if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
+
+        Project project=projectOptional.get();
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectDashboardDto pdd=mapper.map(project,ProjectDashboardDto.class);
+
+        return new ResponseEntity<>(pdd,HttpStatus.OK);
+    }
+
+    private boolean isValidMember(Long projectId, String loggedInEmail) {
+        int count=memberRepository.countByProjectIdAndUserEmail(projectId,loggedInEmail);
+        if(count>0) return true;
+        return false;
     }
 
     @Override
@@ -216,14 +269,17 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        int totalPages=(int)Math.ceil(memberRepository.findDistinctByEmail(loggedInEmail).size()/2);
+        int totalPages=(int)Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
         Pageable pageable = PageRequest.of(pageNumber, 2);
-        List<Member> members= memberRepository.findDistinctByEmail(loggedInEmail,pageable);
+        List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
         for(Member m:members){
             Project p=m.getProject();
             ProjectListDto project= mapper.map(p, ProjectListDto.class);
+            long totalMembers=(long)memberRepository.countByProject(p);
+            project.setTotalMembers(totalMembers);
+            project.setTotalMissions(p.getMissions().size());
             projectList.add(project);
         }
         HashMap<String,Object> result = new HashMap<>();

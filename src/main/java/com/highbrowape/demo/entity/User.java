@@ -46,6 +46,9 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
     Set<Project> projects;
 
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
+    Set<Member> members;
+
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;

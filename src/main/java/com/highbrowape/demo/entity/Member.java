@@ -26,8 +26,10 @@ public class Member {
     @GeneratedValue
     long id;
 
-    @Column(nullable = false)
-    String email;
+    @ManyToOne
+    @JoinColumn
+    @JsonIgnore
+    User user;
 
     @Enumerated(EnumType.STRING)
     Authority authority;
@@ -39,7 +41,7 @@ public class Member {
 
     String addedBy;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn
     @JsonIgnore
     Project project;
@@ -48,5 +50,12 @@ public class Member {
     List<MissionMember> missionMembers;
 
 
+    public Member(String addedBy, Project project, User user, Authority authority, Date addedOn) {
+        this.addedBy=addedBy;
+        this.project=project;
+        this.user=user;
+        this.authority=authority;
+        this.addedOn=addedOn;
+    }
 }
 

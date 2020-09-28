@@ -11,6 +11,8 @@ import java.util.Date;
 @Setter
 public class ProjectListDto {
 
+    long id;
+
     long projectId;
 
     String projectName;
@@ -21,8 +23,8 @@ public class ProjectListDto {
 
     Date endingDate;
 
-    int totalMissions;
+    long totalMissions;
 
-    int totalMembers;
+    long totalMembers;
 
 }
