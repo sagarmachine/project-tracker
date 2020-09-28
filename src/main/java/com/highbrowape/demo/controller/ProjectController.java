@@ -63,32 +63,32 @@ public class ProjectController {
 
     @PostMapping("/{id}/member")
     public ResponseEntity<?>  addMemberToProject(@PathVariable("id")Long id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
-        return null;
+        return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
     }
     @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToProject(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){
-        return null;
+        return projectService.updateMemberAuthorityToProject(id,authority,principal.getName());
     }
     @DeleteMapping("/member/{id}")
     public ResponseEntity<?>  removeMemberFromProject(@PathVariable("id")Long id, Principal principal){
 
-        return null;
+        return projectService.removeMemberFromProject(id,principal.getName());
     }
 
 
 
     @PostMapping("/{id}/note")
     public ResponseEntity<?>  addNoteToProject(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
-        return null;
+        return projectService.addNoteToProject(id,noteDto,principal.getName());
     }
     @PutMapping("/note/{id}")
     public ResponseEntity<?>  updateNoteOfProject(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
-        return null;
+        return projectService.updateNoteOfProject(id,noteDto,principal.getName());
     }
     @DeleteMapping("/note/{id}")
     public ResponseEntity<?>  removeNoteFromProject(@PathVariable("id")Long id, Principal principal){
 
-        return null;
+        return projectService.removeNoteFromProject(id,principal.getName());
     }
 
 
@@ -96,16 +96,16 @@ public class ProjectController {
 
     @PostMapping("/{id}/link")
     public ResponseEntity<?>  addLinkToProject(@PathVariable("id")Long id, @RequestBody LinkDto linkDto, Principal principal){
-        return null;
+        return projectService.addLinkToProject(id,linkDto,principal.getName());
     }
     @PutMapping("/link/{id}")
     public ResponseEntity<?>  updateLinkOfProject(@PathVariable("id")Long id, @RequestBody LinkDto linkDto,Principal principal){
-        return null;
+        return projectService.updateLinkOfProject(id,linkDto,principal.getName());
     }
     @DeleteMapping("/link/{id}")
     public ResponseEntity<?>  removeLinkFromProject(@PathVariable("id")Long id, Principal principal){
 
-        return null;
+        return projectService.removeLinkFromProject(id,principal.getName());
     }
 
 
