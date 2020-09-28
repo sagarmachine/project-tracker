@@ -6,17 +6,18 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class ProjectDashboardDto {
 
-    String id;
+    long id;
 
-    long projectId;
+    String projectId;
 
     String projectName;
 
-    List<Mission> missions;
+    Set<Mission> missions;
 
 
 }

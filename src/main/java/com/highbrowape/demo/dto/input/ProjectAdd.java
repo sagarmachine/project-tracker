@@ -2,6 +2,7 @@ package com.highbrowape.demo.dto.input;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.highbrowape.demo.entity.User;
 import lombok.Data;
 
 import java.util.Date;
@@ -23,6 +24,11 @@ public class ProjectAdd {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date endingDate;
 
+    User user;
+
+    Date addedOn;
+
+    byte[] image;
 
     List<NoteDto> notes;
 
