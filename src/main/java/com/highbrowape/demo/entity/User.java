@@ -38,7 +38,11 @@ public class User {
 
     byte[] image;
 
-    String imageLink;
+    String imageUrl;
+
+    String thumbnailUrl;
+
+    String deleteUrl;
 
     @Column(unique=true,length=10)
     String phoneNumber;

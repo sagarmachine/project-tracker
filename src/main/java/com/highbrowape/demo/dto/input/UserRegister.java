@@ -21,6 +21,8 @@ public class UserRegister {
     @NotNull(message = "password  can't be null")
     String password;
 
-    MultipartFile image;
+    String  imageUrl;
+
+    String deleteUrl;
 
 }
