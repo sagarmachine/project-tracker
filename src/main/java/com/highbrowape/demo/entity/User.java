@@ -36,8 +36,6 @@ public class User {
      String password;
 
 
-    byte[] image;
-
     String imageUrl;
 
     String thumbnailUrl;
