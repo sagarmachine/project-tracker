@@ -244,6 +244,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
 
+
     @Override
     public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
@@ -300,6 +301,10 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
 
+    @Override
+    public ResponseEntity<?> getProjectMembers(Long id, String loggedInEmail) {
+        return null;
+    }
 
     @Override
     public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
@@ -392,7 +397,10 @@ public class ProjectServiceImpl implements IProjectService {
 
     }
 
-
+    @Override
+    public ResponseEntity<?> getProjectNotes(Long id, String loggedInEmail) {
+        return null;
+    }
 
 
     @Override
@@ -474,6 +482,11 @@ public class ProjectServiceImpl implements IProjectService {
 
         return new ResponseEntity<>("PROJECT NOTE DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
+    }
+
+    @Override
+    public ResponseEntity<?> getProjectLinks(Long id, String loggedInEmail) {
+        return null;
     }
 
     @Override
