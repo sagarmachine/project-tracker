@@ -425,7 +425,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<ProjectNote> projectNoteOptional= projectNoteRepository.findById(id);
 
-        if(!projectNoteOptional.isPresent()) throw new ProjectNoteNotFoundException("No note found with member id  "+ id);
+        if(!projectNoteOptional.isPresent()) throw new ProjectNoteNotFoundException("No note found with  id  "+ id);
 
 
         Project project = projectNoteOptional.get().getProject();
@@ -442,7 +442,6 @@ public class ProjectServiceImpl implements IProjectService {
         note1.setAddedBy(loggedInEmail);
         note1.setAddedOn(projectNoteOptional.get().getAddedOn());
         projectNoteRepository.save(note1);
-
 
 
         return new ResponseEntity<>("Note Updated",HttpStatus.ACCEPTED);

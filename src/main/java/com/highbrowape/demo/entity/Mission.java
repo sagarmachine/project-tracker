@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +42,7 @@ public class Mission {
     @CreationTimestamp
     Date addedOn;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
 
@@ -79,18 +82,45 @@ public class Mission {
     List<MissionMember> missionMembers;
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Note> notes;
+    List<Note> notes= new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Link> links;
+    List<Link> links=new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Progress> progress;
+    List<Progress> progress= new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Objective> objectives;
+    List<Objective> objectives= new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Conversation> conversations;
+    List<Conversation> conversations= new ArrayList<>();
+
+
+    public void addMissionMember(MissionMember missionMember){
+        missionMembers.add(missionMember);
+        missionMember.setMission(this);
+    }
+
+    public void addLink(Link link){
+        links.add(link);
+        link.setMission(this);
+    }
+    public void addNote(Note note){
+        notes.add(note);
+        note.setMission(this);
+    }
+    public void addConversations(Conversation conversation){
+        conversations.add(conversation);
+        conversation.setMission(this);
+    }
+    public void addObjective(Objective objective){
+        objectives.add(objective);
+        objective.setMission(this);
+    }
+    public void addProgress(Progress progress){
+        this.progress.add(progress);
+        progress.setMission(this);
+    }
 }
 
