@@ -15,7 +15,6 @@ public class MissionAddDto {
 
     String name;
 
-    String missionId;
 
     String description;
 

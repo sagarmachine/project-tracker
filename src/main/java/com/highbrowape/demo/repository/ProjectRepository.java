@@ -21,4 +21,6 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
 
 
     double countByUserEmail(String loggedInEmail);
+
+    Optional<Project> findByProjectId(Long projectId);
 }

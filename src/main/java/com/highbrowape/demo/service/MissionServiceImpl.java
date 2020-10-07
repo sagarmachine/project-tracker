@@ -12,10 +12,12 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
 
+@Service
 public class MissionServiceImpl implements IMissionService {
 
 
@@ -59,6 +61,8 @@ public class MissionServiceImpl implements IMissionService {
 
 
         Mission mission= mapper.map(missionAddDto,Mission.class);
+        long totalMissions=countMissions(project,1,null);
+        mission.setMissionId(totalMissions+1+"");
         mission.setLevel(1);
         mission.setProject(project);
         mission.setAddedBy(loggedInEmail);
@@ -109,6 +113,13 @@ public class MissionServiceImpl implements IMissionService {
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
 
+    private long countMissions(Project project, long level, Mission missionParent) {
+        if(missionParent==null)
+       return missionRepository.countByProjectAndLevel(project,level);
+        return missionRepository.countByMissionParent(missionParent);
+
+    }
+
     @Override
     public ResponseEntity<?> addMissionAtLevelN(MissionAddDto missionAddDto, Long id, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
@@ -120,7 +131,7 @@ public class MissionServiceImpl implements IMissionService {
 
         HashMap<String, Object> missionMap = isValidMission(id);
         if (!(boolean) missionMap.get("isValid"))
-            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+            throw new MissionNotFoundException(" No Mission found with mission id :" + id);
         Mission mission = (Mission) missionMap.get("mission");
 
         HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
@@ -132,7 +143,11 @@ public class MissionServiceImpl implements IMissionService {
         }
 
         Mission mission1= mapper.map(missionAddDto,Mission.class);
+
+        long totalMissions=countMissions(mission.getProject(),mission.getLevel()+1,mission)+1;
+        mission1.setMissionId(mission.getMissionId()+"."+totalMissions);
         mission1.setLevel(mission.getLevel()+1);
+        mission1.setMissionParent(mission);
         mission1.setProject(mission.getProject());
         mission1.setAddedBy(loggedInEmail);
 
@@ -196,7 +211,7 @@ public class MissionServiceImpl implements IMissionService {
 
         HashMap<String, Object> missionMap = isValidMission(id);
         if (!(boolean) missionMap.get("isValid"))
-            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+            throw new MissionNotFoundException(" No Mission found with  mission id :" + id);
         Mission mission = (Mission) missionMap.get("mission");
 
 
@@ -471,7 +486,7 @@ public class MissionServiceImpl implements IMissionService {
 
     public HashMap<String ,Object> isValidProject(long id) {
         HashMap<String,Object> result= new HashMap<>();
-        Optional<Project> optionalProject = projectRepository.findById(id);
+        Optional<Project> optionalProject = projectRepository.findByProjectId(id);
         if (optionalProject.isPresent()) {
             result.put("isValid",true);
             result.put("project",optionalProject.get());
@@ -494,7 +509,7 @@ public class MissionServiceImpl implements IMissionService {
     }
     public HashMap<String ,Object> isValidMission(long id) {
         HashMap<String,Object> result= new HashMap<>();
-        Optional<Mission> optionalMission = missionRepository.findById(id);
+        Optional<Mission> optionalMission = missionRepository.findByMissionId(id);
         if (optionalMission.isPresent()) {
             result.put("isValid",true);
             result.put("mission",optionalMission.get());

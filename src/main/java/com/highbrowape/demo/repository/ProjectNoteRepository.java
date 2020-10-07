@@ -6,6 +6,8 @@ import com.highbrowape.demo.entity.ProjectNote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 public interface ProjectNoteRepository extends JpaRepository<ProjectNote,Long> {
 
@@ -13,4 +15,6 @@ public interface ProjectNoteRepository extends JpaRepository<ProjectNote,Long> {
     void deleteByProject(Project project);
 
     void deleteAllByProject(Project project);
+
+    List<ProjectNote> findByProjectProjectId(Long id);
 }

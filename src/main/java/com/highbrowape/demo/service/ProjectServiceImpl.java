@@ -210,9 +210,9 @@ public class ProjectServiceImpl implements IProjectService {
     public ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail) {
 
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
-        Optional<Project> projectOptional=projectRepository.findById(projectId);
+        Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
-        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  "+projectId);
+        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
 
         if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
 
@@ -248,9 +248,9 @@ public class ProjectServiceImpl implements IProjectService {
     @Override
     public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
-        Optional<Project> projectOptional=projectRepository.findById(projectId);
+        Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
-        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  "+projectId);
+        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
 
         if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
 
@@ -303,17 +303,26 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public ResponseEntity<?> getProjectMembers(Long id, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
+        if(!(boolean)projectMemberMap.get("isValid")) throw new MemberNotFoundException("No project found with projectID:"+id+" and email "+loggedInEmail);
+
+        List<Member> members=memberRepository.findByProjectProjectId(id);
+
+
+        return new ResponseEntity<>(members,HttpStatus.OK);
+
     }
 
     @Override
     public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
-        Optional<Project> projectOptional = projectRepository.findById(id);
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
 
 
-        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  " + id);
 
         Project project = projectOptional.get();
         Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
@@ -399,7 +408,15 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public ResponseEntity<?> getProjectNotes(Long id, String loggedInEmail) {
-        return null;
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
+        if(!(boolean)projectMemberMap.get("isValid")) throw new MemberNotFoundException("No project found with projectID:"+id+" and email "+loggedInEmail);
+
+        List<ProjectNote> projectNotes=projectNoteRepository.findByProjectProjectId(id);
+
+
+        return new ResponseEntity<>(projectNotes,HttpStatus.OK);
     }
 
 
@@ -407,8 +424,8 @@ public class ProjectServiceImpl implements IProjectService {
     public ResponseEntity<?> addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
-        Optional<Project> projectOptional = projectRepository.findById(id);
-        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  " + id);
 
         Project project = projectOptional.get();
         Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
@@ -485,14 +502,24 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Override
     public ResponseEntity<?> getProjectLinks(Long id, String loggedInEmail) {
-        return null;
+
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
+        if(!(boolean)projectMemberMap.get("isValid")) throw new MemberNotFoundException("No project found with projectID:"+id+" and email "+loggedInEmail);
+
+        List<ProjectLink> projectLinks=projectLinkRepository.findByProjectProjectId(id);
+
+
+
+        return new ResponseEntity<>(projectLinks,HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<?> addLinkToProject(Long id, LinkDto linkDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
-        Optional<Project> projectOptional = projectRepository.findById(id);
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
         if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with id  " + id);
 
         Project project = projectOptional.get();
@@ -568,6 +595,17 @@ public class ProjectServiceImpl implements IProjectService {
 
 
         return new ResponseEntity<>("LINK DELETED SUCCESSFULLY ",HttpStatus.ACCEPTED);
+    }
+    public HashMap<String ,Object> isValidProjectMember(long projectId,String email) {
+        HashMap<String,Object> result= new HashMap<>();
+        Optional<Member> optionalMember = memberRepository.findByProjectProjectIdAndUserEmail(projectId,email);
+        if (optionalMember.isPresent()) {
+            result.put("isValid",true);
+            result.put("member",optionalMember.get());
+            return result;
+        }
+        result.put("isValid",false);
+        return result;
     }
 
 
