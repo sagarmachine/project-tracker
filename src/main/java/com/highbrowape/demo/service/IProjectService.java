@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 
 
     //project DB id
+    ResponseEntity<?>  getProjectMembers(Long id, String loggedInEmail);
+
      ResponseEntity<?>  addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail);
     //member DB id
      ResponseEntity<?>  updateMemberAuthorityToProject(Long id, @PathVariable("authority") Authority authority, String loggedInEmail);
@@ -37,6 +39,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 
+     ResponseEntity<?>  getProjectNotes(Long id, String loggedInEmail);
      ResponseEntity<?>  addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail);
      ResponseEntity<?>  updateNoteOfProject(Long id, NoteDto noteDto,String loggedInEmail);
      ResponseEntity<?>  removeNoteFromProject(Long id, String loggedInEmail);
@@ -46,10 +49,9 @@ import org.springframework.web.bind.annotation.*;
 
 
 
+     ResponseEntity<?>  getProjectLinks(Long id,String loggedInEmail);
      ResponseEntity<?> addLinkToProject( Long id, LinkDto linkDto, String loggedInEmail);
-
      ResponseEntity<?> updateLinkOfProject( Long id, LinkDto linkDto, String loggedInEmail);
-
      ResponseEntity<?> removeLinkFromProject( Long id, String loggedInEmail);
 
 }

@@ -16,14 +16,22 @@ public class UserList {
 
     String lastName;
 
+    String imageUrl;
+
+    String thumbnailUrl;
+
+
+
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
-    public UserList(String email, String firstName, String lastName, Date addedOn) {
+    public UserList(String email, String firstName, String lastName, Date addedOn,String imageUrl,String thumbnailUrl) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.addedOn = addedOn;
+        this.imageUrl=imageUrl;
+        this.thumbnailUrl=thumbnailUrl;
     }
 }

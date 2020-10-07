@@ -79,6 +79,11 @@ public class UserServiceImpl implements IUserService {
 
         HttpHeaders httpHeaders= new HttpHeaders();
         httpHeaders.add("Authorization","Bearer "+jwt);
+        httpHeaders.add("Name",user.getFirstName()+" "+user.getLastName());
+        httpHeaders.add("Email",user.getEmail());
+        httpHeaders.add("imageUrl",user.getImageUrl());
+        httpHeaders.add("thumbnailUrl",user.getThumbnailUrl());
+
 
         return new ResponseEntity<>(user,httpHeaders,HttpStatus.OK);
     }
@@ -91,8 +96,15 @@ public class UserServiceImpl implements IUserService {
         if(token.isAuthenticated()){
             HttpHeaders httpHeaders= new HttpHeaders();
             String jwt = jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(userLogin.getEmail(),userLogin.getPassword(),new ArrayList<>()));
+
+
+            Optional<User> userOptional = userRepository.findByEmail(token.getName());
+
             httpHeaders.add("Authorization","Bearer "+jwt);
-            httpHeaders.add("Name",token.getName());
+            httpHeaders.add("Name",userOptional.get().getFirstName()+" "+userOptional.get().getLastName());
+            httpHeaders.add("Email",token.getName());
+            httpHeaders.add("imageUrl",userOptional.get().getImageUrl());
+            httpHeaders.add("thumbnailUrl",userOptional.get().getThumbnailUrl());
 
             return new ResponseEntity<>(httpHeaders,HttpStatus.OK);
 

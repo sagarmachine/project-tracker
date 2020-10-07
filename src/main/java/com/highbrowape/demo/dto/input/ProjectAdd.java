@@ -28,7 +28,9 @@ public class ProjectAdd {
 
     Date addedOn;
 
-    byte[] image;
+    String imageUrl;
+    String thumbnailUrl;
+    String deleteUrl;
 
     List<NoteDto> notes;
 

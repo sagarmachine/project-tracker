@@ -49,7 +49,9 @@ public class Project {
     @Column(nullable = false)
     Date endingDate;
 
-    byte[] image;
+    String imageUrl;
+    String thumbnailUrl;
+    String deleteUrl;
 
     @ManyToOne
     @JoinColumn
