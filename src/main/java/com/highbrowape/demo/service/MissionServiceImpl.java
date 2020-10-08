@@ -1,9 +1,6 @@
 package com.highbrowape.demo.service;
 
-import com.highbrowape.demo.dto.input.LinkDto;
-import com.highbrowape.demo.dto.input.MissionAddDto;
-import com.highbrowape.demo.dto.input.NoteDto;
-import com.highbrowape.demo.dto.input.ProjectMemberDto;
+import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.*;
 import com.highbrowape.demo.exception.*;
 import com.highbrowape.demo.repository.*;
@@ -199,6 +196,11 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
+    public ResponseEntity<?> getMissionMembers(Long id, String name) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<?> addMemberToMission(ProjectMemberDto projectMemberDto, Long id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
@@ -257,6 +259,11 @@ public class MissionServiceImpl implements IMissionService {
         missionMember.getMission().getMissionMembers().remove(missionMember);
         missionMemberRepository.delete(missionMember);
         return new ResponseEntity<>("mission Member Deleted Succesfully ",HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> getMissionNotes(Long id, String name) {
+        return null;
     }
 
     private MissionMember updateAndRemoveMemberFromMissionPreProcessing(long id,String loggedInEmail){
@@ -378,6 +385,11 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
+    public ResponseEntity<?> getMissionLinks(Long id, String name) {
+        return null;
+    }
+
+    @Override
     public ResponseEntity<?> addLinkToMission(LinkDto linkDto, Long id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
@@ -469,6 +481,26 @@ public class MissionServiceImpl implements IMissionService {
 
         return new ResponseEntity<>("MISSION LINK DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
+    }
+
+    @Override
+    public ResponseEntity<?> getMissionObjectives(Long id, String name) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, Long id, String name) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeObjectiveFromMission(Long id, String name) {
+        return null;
     }
 
     public HashMap<String ,Object> isValidUser(String email) {

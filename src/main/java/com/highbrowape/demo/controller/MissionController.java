@@ -1,10 +1,7 @@
 package com.highbrowape.demo.controller;
 
 
-import com.highbrowape.demo.dto.input.LinkDto;
-import com.highbrowape.demo.dto.input.MissionAddDto;
-import com.highbrowape.demo.dto.input.NoteDto;
-import com.highbrowape.demo.dto.input.ProjectMemberDto;
+import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.service.IMissionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,10 @@ public class MissionController {
 
 
 
+    @GetMapping("/{id}/member")
+    public ResponseEntity<?>  getProjectMember(@PathVariable("id")Long id,  Principal principal){
+        return missionService.getMissionMembers(id,principal.getName());
+    }
     @PostMapping("/{id}/member")
     public ResponseEntity<?>  addMemberToMission(@PathVariable("id")Long id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return missionService.addMemberToMission(projectMemberDto,id,principal.getName());
@@ -55,7 +56,10 @@ public class MissionController {
 
 
 
-    @PostMapping("/{id}/note")
+    @GetMapping("/{id}/note")
+    public ResponseEntity<?>  getProjectNote(@PathVariable("id")Long id,  Principal principal){
+        return missionService.getMissionNotes(id,principal.getName());
+    } @PostMapping("/{id}/note")
     public ResponseEntity<?>  addNoteToMission(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
         return missionService.addNoteToMission(noteDto,id,principal.getName());
     }
@@ -75,7 +79,10 @@ public class MissionController {
 
 
 
-    @PostMapping("/{id}/link")
+    @GetMapping("/{id}/link")
+    public ResponseEntity<?>  getProjectLink(@PathVariable("id")Long id,  Principal principal){
+        return missionService.getMissionLinks(id,principal.getName());
+    } @PostMapping("/{id}/link")
     public ResponseEntity<?>  addLinkToMission(@PathVariable("id")Long id, @RequestBody LinkDto linkDto, Principal principal){
         return missionService.addLinkToMission(linkDto,id,principal.getName());
     }
@@ -89,6 +96,26 @@ public class MissionController {
 
 
         return missionService.removeLinkFromMission(id,principal.getName());
+    }
+
+
+    @GetMapping("/{id}/objective")
+    public ResponseEntity<?>  getMissionObjective(@PathVariable("id")Long id,  Principal principal){
+        return missionService.getMissionObjectives(id,principal.getName());
+    } @PostMapping("/{id}/objective")
+    public ResponseEntity<?>  addObjectiveToMission(@PathVariable("id")Long id, @RequestBody ObjectiveDto objectiveDto, Principal principal){
+        return missionService.addObjectiveToMission(objectiveDto,id,principal.getName());
+    }
+    @PutMapping("/objective/{id}")
+    public ResponseEntity<?>  updateObjectiveOfMission(@PathVariable("id")Long id, @RequestBody ObjectiveDto objectiveDto,Principal principal){
+
+        return missionService.updateObjectiveOfMission(objectiveDto,id,principal.getName());
+    }
+    @DeleteMapping("/objective/{id}")
+    public ResponseEntity<?>  removeObjectiveFromMission(@PathVariable("id")Long id, Principal principal){
+
+
+        return missionService.removeObjectiveFromMission(id,principal.getName());
     }
 
 
