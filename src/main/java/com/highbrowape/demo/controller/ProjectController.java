@@ -50,24 +50,24 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/dashboard/{id}")
+    @GetMapping("/{id}dashboard/")
     public  ResponseEntity<?> getProjectDashboard(@PathVariable("id")String id, Principal principal){
         return projectService.getProjectDashboard(id,principal.getName());
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/{id}/detail")
     public  ResponseEntity<Project> getProjectDetailView(@PathVariable("id")String id, Principal principal){
         return projectService.getProjectDetail(id,principal.getName());
     }
 
 
 
-    @GetMapping("/member/{id}")
+    @GetMapping("/{id}/member")
     public ResponseEntity<?>  getProjectMember(@PathVariable("id")String id,  Principal principal){
            return projectService.getProjectMembers(id,principal.getName());
     }
 
-    @PostMapping("/member/{id}")
+    @PostMapping("/{id}/member")
     public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
     }
@@ -89,11 +89,11 @@ public class ProjectController {
         return projectService.getProjectNotes(id,principal.getName());
     }
 
-    @PostMapping("/note/{id}")
+    @PostMapping("/{id}/note")
     public ResponseEntity<?>  addNoteToProject(@PathVariable("id")String id, @RequestBody NoteDto noteDto,Principal principal){
         return projectService.addNoteToProject(id,noteDto,principal.getName());
     }
-    @PutMapping("/note/{id}")
+    @PutMapping("/{id}/note")
     public ResponseEntity<?>  updateNoteOfProject(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
         return projectService.updateNoteOfProject(id,noteDto,principal.getName());
     }
@@ -105,12 +105,12 @@ public class ProjectController {
 
 
 
-    @GetMapping("/link/{id}")
+    @GetMapping("/{id}/link")
     public ResponseEntity<?>  getProjectLink(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectLinks(id,principal.getName());
     }
 
-    @PostMapping("/link/{id}")
+    @PostMapping("/{id}/link")
     public ResponseEntity<?>  addLinkToProject(@PathVariable("id")String id, @RequestBody LinkDto linkDto, Principal principal){
         return projectService.addLinkToProject(id,linkDto,principal.getName());
     }
