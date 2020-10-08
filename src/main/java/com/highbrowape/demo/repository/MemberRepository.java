@@ -18,15 +18,14 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<Member> findByProjectProjectId(String id) ;
 
 
-    long countByProjectIdAndUserEmail(String projectId, String loggedInEmail);
+
 
     Object countByProject(Project p);
 
     Optional<Member> findByProjectAndUserEmail(Project project, String loggedInEmail);
 
-    double countDistinctByUserEmail(String loggedInEmail);
 
-    List<Member> findDistinctByUserEmail(String loggedInEmail, Pageable pageable);
+
 
     double countByUserEmail(String loggedInEmail);
 

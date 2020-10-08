@@ -29,10 +29,7 @@ public class Member {
 
     @ManyToOne
     @JoinColumn
-    @JsonIgnore
     User user;
-
-    String email;
 
     @Enumerated(EnumType.STRING)
     Authority authority;

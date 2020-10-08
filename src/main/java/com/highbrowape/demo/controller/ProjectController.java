@@ -66,6 +66,7 @@ public class ProjectController {
     public ResponseEntity<?>  getProjectMember(@PathVariable("id")String id,  Principal principal){
            return projectService.getProjectMembers(id,principal.getName());
     }
+
     @PostMapping("/member/{id}")
     public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
@@ -87,6 +88,7 @@ public class ProjectController {
     public ResponseEntity<?>  getProjectNote(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectNotes(id,principal.getName());
     }
+
     @PostMapping("/note/{id}")
     public ResponseEntity<?>  addNoteToProject(@PathVariable("id")String id, @RequestBody NoteDto noteDto,Principal principal){
         return projectService.addNoteToProject(id,noteDto,principal.getName());
@@ -107,6 +109,7 @@ public class ProjectController {
     public ResponseEntity<?>  getProjectLink(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectLinks(id,principal.getName());
     }
+
     @PostMapping("/link/{id}")
     public ResponseEntity<?>  addLinkToProject(@PathVariable("id")String id, @RequestBody LinkDto linkDto, Principal principal){
         return projectService.addLinkToProject(id,linkDto,principal.getName());

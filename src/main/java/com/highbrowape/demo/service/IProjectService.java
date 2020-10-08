@@ -50,7 +50,9 @@ import org.springframework.web.bind.annotation.*;
 
 
      ResponseEntity<?>  getProjectLinks(String id,String loggedInEmail);
+
      ResponseEntity<?> addLinkToProject(String id, LinkDto linkDto, String loggedInEmail);
+
      ResponseEntity<?> updateLinkOfProject( Long id, LinkDto linkDto, String loggedInEmail);
      ResponseEntity<?> removeLinkFromProject( Long id, String loggedInEmail);
 

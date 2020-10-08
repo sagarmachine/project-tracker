@@ -60,7 +60,6 @@ public class ProjectServiceImpl implements IProjectService {
             throw new ProjectAlreadyExistException("Project With projectId " + projectAdd.getProjectId() + " already exist ");
         }
         Member member=new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
-        member.setEmail(loggedInEmail);
         project.addMember(member);
         memberRepository.save(member);
 
@@ -263,7 +262,9 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     private boolean isValidMember(String projectId, String loggedInEmail) {
+
         long count=memberRepository.countByProjectProjectIdAndUserEmail(projectId,loggedInEmail);
+
         if(count>0) return true;
         return false;
     }
@@ -275,7 +276,7 @@ public class ProjectServiceImpl implements IProjectService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
-        Pageable pageable = PageRequest.of(pageNumber, 2);
+        Pageable pageable = PageRequest.of(pageNumber, 5);
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
