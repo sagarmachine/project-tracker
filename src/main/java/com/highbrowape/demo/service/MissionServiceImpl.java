@@ -41,7 +41,7 @@ public class MissionServiceImpl implements IMissionService {
 
 
     @Override
-    public ResponseEntity<?> addMissionAtLevel1(MissionAddDto missionAddDto, Long id, String loggedInEmail) {
+    public ResponseEntity<?> addMissionAtLevel1(MissionAddDto missionAddDto, String id, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
@@ -118,7 +118,7 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> addMissionAtLevelN(MissionAddDto missionAddDto, Long id, String loggedInEmail) {
+    public ResponseEntity<?> addMissionAtLevelN(MissionAddDto missionAddDto, String id, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
@@ -196,12 +196,12 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionMembers(Long id, String name) {
+    public ResponseEntity<?> getMissionMembers(String id, String name) {
         return null;
     }
 
     @Override
-    public ResponseEntity<?> addMemberToMission(ProjectMemberDto projectMemberDto, Long id, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToMission(ProjectMemberDto projectMemberDto, String id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         User user = (User) userMap.get("user");
@@ -262,7 +262,7 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionNotes(Long id, String name) {
+    public ResponseEntity<?> getMissionNotes(String id, String name) {
         return null;
     }
 
@@ -290,7 +290,7 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> addNoteToMission(NoteDto noteDto, Long id, String loggedInEmail) {
+    public ResponseEntity<?> addNoteToMission(NoteDto noteDto, String id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         User user = (User) userMap.get("user");
@@ -385,12 +385,12 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionLinks(Long id, String name) {
+    public ResponseEntity<?> getMissionLinks(String id, String name) {
         return null;
     }
 
     @Override
-    public ResponseEntity<?> addLinkToMission(LinkDto linkDto, Long id, String loggedInEmail) {
+    public ResponseEntity<?> addLinkToMission(LinkDto linkDto, String id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         User user = (User) userMap.get("user");
@@ -484,12 +484,12 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionObjectives(Long id, String name) {
+    public ResponseEntity<?> getMissionObjectives(String id, String name) {
         return null;
     }
 
     @Override
-    public ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, Long id, String name) {
+    public ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String name) {
         return null;
     }
 
@@ -516,7 +516,7 @@ public class MissionServiceImpl implements IMissionService {
         return result;
     }
 
-    public HashMap<String ,Object> isValidProject(long id) {
+    public HashMap<String ,Object> isValidProject(String id) {
         HashMap<String,Object> result= new HashMap<>();
         Optional<Project> optionalProject = projectRepository.findByProjectId(id);
         if (optionalProject.isPresent()) {
@@ -539,7 +539,7 @@ public class MissionServiceImpl implements IMissionService {
         result.put("isValid",false);
         return result;
     }
-    public HashMap<String ,Object> isValidMission(long id) {
+    public HashMap<String ,Object> isValidMission(String id) {
         HashMap<String,Object> result= new HashMap<>();
         Optional<Mission> optionalMission = missionRepository.findByMissionId(id);
         if (optionalMission.isPresent()) {

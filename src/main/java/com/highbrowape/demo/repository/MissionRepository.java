@@ -10,10 +10,9 @@ import java.util.Optional;
 public interface MissionRepository extends JpaRepository<Mission,Long> {
 
 
-    
     long countByProjectAndLevel(Project project, long level);
 
-    Optional<Mission> findByMissionId(long id);
+    Optional<Mission> findByMissionId(String id);
 
     long countByMissionParent(Mission missionParent);
 }

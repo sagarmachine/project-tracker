@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
     ResponseEntity<?> updateProject(ProjectUpdate projectUpdate, String loggedInEmail);
 
-    ResponseEntity<?> getProjectDashboard(Long projectId, String loggedInEmail);
+    ResponseEntity<?> getProjectDashboard(String projectId, String loggedInEmail);
 
     ResponseEntity<?> getProjectList(int pageNumber, String loggedInEmail);
 
-    ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail);
+    ResponseEntity<Project> getProjectDetail(String projectId, String loggedInEmail);
 
     ResponseEntity<?> getMyCreatedProjectList(int pageNumber, String loggedInEmail);
 
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.*;
     //project DB id
     ResponseEntity<?>  getProjectMembers(String id, String loggedInEmail);
 
-     ResponseEntity<?>  addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail);
+     ResponseEntity<?>  addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail);
     //member DB id
      ResponseEntity<?>  updateMemberAuthorityToProject(Long id, @PathVariable("authority") Authority authority, String loggedInEmail);
      //member DB id
@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.*;
 
 
      ResponseEntity<?>  getProjectNotes(String id, String loggedInEmail);
-     ResponseEntity<?>  addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail);
+     ResponseEntity<?>  addNoteToProject(String id, NoteDto noteDto, String loggedInEmail);
      ResponseEntity<?>  updateNoteOfProject(Long id, NoteDto noteDto,String loggedInEmail);
      ResponseEntity<?>  removeNoteFromProject(Long id, String loggedInEmail);
 
@@ -50,7 +50,7 @@ import org.springframework.web.bind.annotation.*;
 
 
      ResponseEntity<?>  getProjectLinks(String id,String loggedInEmail);
-     ResponseEntity<?> addLinkToProject( Long id, LinkDto linkDto, String loggedInEmail);
+     ResponseEntity<?> addLinkToProject(String id, LinkDto linkDto, String loggedInEmail);
      ResponseEntity<?> updateLinkOfProject( Long id, LinkDto linkDto, String loggedInEmail);
      ResponseEntity<?> removeLinkFromProject( Long id, String loggedInEmail);
 

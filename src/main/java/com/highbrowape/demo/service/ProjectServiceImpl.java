@@ -207,7 +207,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail) {
+    public ResponseEntity<Project> getProjectDetail(String projectId, String loggedInEmail) {
 
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
@@ -246,7 +246,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
+    public ResponseEntity<ProjectDashboardDto> getProjectDashboard(String projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
@@ -262,8 +262,8 @@ public class ProjectServiceImpl implements IProjectService {
         return new ResponseEntity<>(pdd,HttpStatus.OK);
     }
 
-    private boolean isValidMember(Long projectId, String loggedInEmail) {
-        int count=memberRepository.countByProjectIdAndUserEmail(projectId,loggedInEmail);
+    private boolean isValidMember(String projectId, String loggedInEmail) {
+        long count=memberRepository.countByProjectProjectIdAndUserEmail(projectId,loggedInEmail);
         if(count>0) return true;
         return false;
     }
@@ -316,7 +316,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
@@ -421,7 +421,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<?> addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail) {
+    public ResponseEntity<?> addNoteToProject(String id, NoteDto noteDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
@@ -516,7 +516,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addLinkToProject(Long id, LinkDto linkDto, String loggedInEmail) {
+    public ResponseEntity<?> addLinkToProject(String id, LinkDto linkDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);

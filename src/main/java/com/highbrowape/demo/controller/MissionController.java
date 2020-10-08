@@ -20,14 +20,14 @@ public class MissionController {
 
 
     @PostMapping("/level/1/{id}")
-    public ResponseEntity<?> addMissionAtLevel1(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") long id,Principal principal){
+    public ResponseEntity<?> addMissionAtLevel1(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") String id,Principal principal){
 
         return missionService.addMissionAtLevel1(missionAddDto,id,principal.getName());
 
     }
 
     @PostMapping("/level/n/{id}")
-    public ResponseEntity<?> addMissionAtLevelN(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") long id,Principal principal){
+    public ResponseEntity<?> addMissionAtLevelN(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") String id,Principal principal){
 
         return missionService.addMissionAtLevelN(missionAddDto,id,principal.getName());
     }
@@ -37,11 +37,11 @@ public class MissionController {
 
 
     @GetMapping("/{id}/member")
-    public ResponseEntity<?>  getProjectMember(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectMember(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionMembers(id,principal.getName());
     }
     @PostMapping("/{id}/member")
-    public ResponseEntity<?>  addMemberToMission(@PathVariable("id")Long id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
+    public ResponseEntity<?>  addMemberToMission(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return missionService.addMemberToMission(projectMemberDto,id,principal.getName());
     }
     @PutMapping("/member/{id}/authority/{authority}")
@@ -57,10 +57,10 @@ public class MissionController {
 
 
     @GetMapping("/{id}/note")
-    public ResponseEntity<?>  getProjectNote(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectNote(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionNotes(id,principal.getName());
     } @PostMapping("/{id}/note")
-    public ResponseEntity<?>  addNoteToMission(@PathVariable("id")Long id, @RequestBody NoteDto noteDto,Principal principal){
+    public ResponseEntity<?>  addNoteToMission(@PathVariable("id")String id, @RequestBody NoteDto noteDto,Principal principal){
         return missionService.addNoteToMission(noteDto,id,principal.getName());
     }
     @PutMapping("/note/{id}")
@@ -80,10 +80,10 @@ public class MissionController {
 
 
     @GetMapping("/{id}/link")
-    public ResponseEntity<?>  getProjectLink(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectLink(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionLinks(id,principal.getName());
     } @PostMapping("/{id}/link")
-    public ResponseEntity<?>  addLinkToMission(@PathVariable("id")Long id, @RequestBody LinkDto linkDto, Principal principal){
+    public ResponseEntity<?>  addLinkToMission(@PathVariable("id")String id, @RequestBody LinkDto linkDto, Principal principal){
         return missionService.addLinkToMission(linkDto,id,principal.getName());
     }
     @PutMapping("/link/{id}")
@@ -100,10 +100,10 @@ public class MissionController {
 
 
     @GetMapping("/{id}/objective")
-    public ResponseEntity<?>  getMissionObjective(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getMissionObjective(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionObjectives(id,principal.getName());
     } @PostMapping("/{id}/objective")
-    public ResponseEntity<?>  addObjectiveToMission(@PathVariable("id")Long id, @RequestBody ObjectiveDto objectiveDto, Principal principal){
+    public ResponseEntity<?>  addObjectiveToMission(@PathVariable("id")String id, @RequestBody ObjectiveDto objectiveDto, Principal principal){
         return missionService.addObjectiveToMission(objectiveDto,id,principal.getName());
     }
     @PutMapping("/objective/{id}")
