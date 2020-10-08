@@ -60,7 +60,6 @@ public class ProjectServiceImpl implements IProjectService {
             throw new ProjectAlreadyExistException("Project With projectId " + projectAdd.getProjectId() + " already exist ");
         }
         Member member=new Member(loggedInEmail,project,user,Authority.CREATOR,new java.util.Date());
-        member.setEmail(loggedInEmail);
         project.addMember(member);
         memberRepository.save(member);
 

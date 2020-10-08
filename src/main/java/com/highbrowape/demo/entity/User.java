@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -45,12 +46,15 @@ public class User {
     String phoneNumber;
 
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
+    @JsonIgnore
     Set<Project> projects;
 
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
+    @JsonIgnore
     Set<Member> members;
 
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
+    @JsonIgnore
     Set<MissionMember> missionMembers;
 
     @CreationTimestamp
