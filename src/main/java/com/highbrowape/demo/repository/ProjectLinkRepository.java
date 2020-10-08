@@ -16,5 +16,5 @@ public interface ProjectLinkRepository extends JpaRepository<ProjectLink,Long> {
 
     void deleteAllByProject(Project project);
 
-    List<ProjectLink> findByProjectProjectId(Long id);
+    List<ProjectLink> findByProjectProjectId(String id);
 }

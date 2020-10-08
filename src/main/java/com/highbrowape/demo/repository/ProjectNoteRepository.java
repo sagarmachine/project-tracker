@@ -16,5 +16,5 @@ public interface ProjectNoteRepository extends JpaRepository<ProjectNote,Long> {
 
     void deleteAllByProject(Project project);
 
-    List<ProjectNote> findByProjectProjectId(Long id);
+    List<ProjectNote> findByProjectProjectId(String id);
 }

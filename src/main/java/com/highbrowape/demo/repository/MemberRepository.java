@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member,Long> {
 
 
-    List<Member> findByProjectProjectId(Long id) ;
+    List<Member> findByProjectProjectId(String id) ;
 
 
     int countByProjectIdAndUserEmail(Long projectId, String loggedInEmail);
@@ -35,5 +35,5 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     void deleteAllByProjectId(long id);
 
-    Optional<Member> findByProjectProjectIdAndUserEmail(long projectId, String email);
+    Optional<Member> findByProjectProjectIdAndUserEmail(String projectId, String email);
 }

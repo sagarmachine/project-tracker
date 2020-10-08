@@ -13,7 +13,7 @@ public class ProjectListDto {
 
     long id;
 
-    long projectId;
+    String projectId;
 
     String projectName;
 

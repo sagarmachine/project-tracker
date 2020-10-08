@@ -63,7 +63,7 @@ public class ProjectController {
 
 
     @GetMapping("/{id}/member")
-    public ResponseEntity<?>  getProjectMember(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectMember(@PathVariable("id")String id,  Principal principal){
            return projectService.getProjectMembers(id,principal.getName());
     }
     @PostMapping("{id}/member")
@@ -84,7 +84,7 @@ public class ProjectController {
 
 
     @GetMapping("/{id}/note")
-    public ResponseEntity<?>  getProjectNote(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectNote(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectNotes(id,principal.getName());
     }
     @PostMapping("/{id}/note")
@@ -104,7 +104,7 @@ public class ProjectController {
 
 
     @GetMapping("/{id}/link")
-    public ResponseEntity<?>  getProjectLink(@PathVariable("id")Long id,  Principal principal){
+    public ResponseEntity<?>  getProjectLink(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectLinks(id,principal.getName());
     }
     @PostMapping("/{id}/link")

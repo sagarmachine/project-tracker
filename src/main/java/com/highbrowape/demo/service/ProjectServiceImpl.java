@@ -302,7 +302,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<?> getProjectMembers(Long id, String loggedInEmail) {
+    public ResponseEntity<?> getProjectMembers(String id, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
@@ -407,7 +407,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> getProjectNotes(Long id, String loggedInEmail) {
+    public ResponseEntity<?> getProjectNotes(String id, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
@@ -501,7 +501,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> getProjectLinks(Long id, String loggedInEmail) {
+    public ResponseEntity<?> getProjectLinks(String id, String loggedInEmail) {
 
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
@@ -596,7 +596,7 @@ public class ProjectServiceImpl implements IProjectService {
 
         return new ResponseEntity<>("LINK DELETED SUCCESSFULLY ",HttpStatus.ACCEPTED);
     }
-    public HashMap<String ,Object> isValidProjectMember(long projectId,String email) {
+    public HashMap<String ,Object> isValidProjectMember(String projectId,String email) {
         HashMap<String,Object> result= new HashMap<>();
         Optional<Member> optionalMember = memberRepository.findByProjectProjectIdAndUserEmail(projectId,email);
         if (optionalMember.isPresent()) {
