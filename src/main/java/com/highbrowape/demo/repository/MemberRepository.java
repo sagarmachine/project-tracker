@@ -18,7 +18,7 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
     List<Member> findByProjectProjectId(String id) ;
 
 
-    int countByProjectIdAndUserEmail(Long projectId, String loggedInEmail);
+    int countByProjectIdAndUserEmail(String projectId, String loggedInEmail);
 
     Object countByProject(Project p);
 

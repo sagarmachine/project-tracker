@@ -206,7 +206,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<Project> getProjectDetail(Long projectId, String loggedInEmail) {
+    public ResponseEntity<Project> getProjectDetail(String projectId, String loggedInEmail) {
 
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
@@ -245,7 +245,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<ProjectDashboardDto> getProjectDashboard(Long projectId, String loggedInEmail) {
+    public ResponseEntity<ProjectDashboardDto> getProjectDashboard(String projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
@@ -261,7 +261,7 @@ public class ProjectServiceImpl implements IProjectService {
         return new ResponseEntity<>(pdd,HttpStatus.OK);
     }
 
-    private boolean isValidMember(Long projectId, String loggedInEmail) {
+    private boolean isValidMember(String projectId, String loggedInEmail) {
         int count=memberRepository.countByProjectIdAndUserEmail(projectId,loggedInEmail);
         if(count>0) return true;
         return false;
@@ -274,7 +274,7 @@ public class ProjectServiceImpl implements IProjectService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
-        Pageable pageable = PageRequest.of(pageNumber, 2);
+        Pageable pageable = PageRequest.of(pageNumber, 5);
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
@@ -315,7 +315,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToProject(Long id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
@@ -420,7 +420,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<?> addNoteToProject(Long id, NoteDto noteDto, String loggedInEmail) {
+    public ResponseEntity<?> addNoteToProject(String id, NoteDto noteDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
@@ -515,7 +515,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addLinkToProject(Long id, LinkDto linkDto, String loggedInEmail) {
+    public ResponseEntity<?> addLinkToProject(String id, LinkDto linkDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
 
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
