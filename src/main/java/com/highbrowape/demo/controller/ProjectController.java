@@ -84,7 +84,7 @@ public class ProjectController {
 
 
 
-    @GetMapping("/note/{id}")
+    @GetMapping("/{id}/{note}")
     public ResponseEntity<?>  getProjectNote(@PathVariable("id")String id,  Principal principal){
         return projectService.getProjectNotes(id,principal.getName());
     }
