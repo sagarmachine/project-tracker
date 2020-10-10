@@ -27,6 +27,8 @@ public class Mission implements Serializable {
     @GeneratedValue
     long id;
 
+    String addedBy;
+
     @Column(nullable = false)
     String name;
 
@@ -47,8 +49,8 @@ public class Mission implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
 
-    @Column(nullable = false)
-    String addedBy;
+
+
 
     @Enumerated(EnumType.STRING)
     Status status;
@@ -83,6 +85,7 @@ public class Mission implements Serializable {
     @JsonIgnore
     Project project;
 
+<<<<<<< HEAD
     @OneToMany(mappedBy = "mission")
     List<MissionMember> missionMembers=new ArrayList<>();
 
@@ -91,6 +94,16 @@ public class Mission implements Serializable {
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Link> links=new ArrayList<>();
+=======
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    List<MissionMember> missionMembers=new ArrayList<>();
+
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    List<Note> missionNotes= new ArrayList<>();
+
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    List<Link> missionLinks=new ArrayList<>();
+>>>>>>> b6e9c7933e81d004cd6ca2951c683caf95d62496
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Progress> progress= new ArrayList<>();
@@ -108,11 +121,11 @@ public class Mission implements Serializable {
     }
 
     public void addLink(Link link){
-        links.add(link);
+        missionLinks.add(link);
         link.setMission(this);
     }
     public void addNote(Note note){
-        notes.add(note);
+        missionNotes.add(note);
         note.setMission(this);
     }
     public void addConversations(Conversation conversation){

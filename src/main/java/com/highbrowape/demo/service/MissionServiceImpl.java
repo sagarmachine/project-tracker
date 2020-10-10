@@ -7,6 +7,7 @@ import com.highbrowape.demo.repository.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -53,22 +54,29 @@ public class MissionServiceImpl implements IMissionService {
         if(!(boolean)projectMap.get("isValid")) throw  new ProjectNotFoundException(" No project found with  id :"+id);
         Project project=(Project)projectMap.get("project");
 
-        if(!(boolean)isCreatorOrChiefOfProject(project,loggedInEmail).get("isValid"))
+        HashMap<String,Object> memberMap=isCreatorOrChiefOfProject(project,loggedInEmail);
+        if(!(boolean)memberMap.get("isValid"))
             throw new InvalidAuthorityException(loggedInEmail+" is not allowed to add missions to the project");
 
 
+        //Mission mission=new Mission(1,totalMissions+1+"",project,loggedInEmail,Status.TO_DO);
         Mission mission= mapper.map(missionAddDto,Mission.class);
+
         long totalMissions=countMissions(project,1,null);
         mission.setMissionId(totalMissions+1+"");
         mission.setLevel(1);
         mission.setProject(project);
         mission.setAddedBy(loggedInEmail);
+        mission.setStatus(Status.TO_DO);
+
+
 
        // try{
 //        }catch (Exception ex){
 //            throw new RuntimeException(ex.getMessage());
 //        }
         mission=missionRepository.save(mission);
+
 
 
         if(missionAddDto.getNotes()!=null) {
@@ -81,6 +89,7 @@ public class MissionServiceImpl implements IMissionService {
 
             }
         }
+
         if(missionAddDto.getLinks()!=null) {
             for (LinkDto link : missionAddDto.getLinks()) {
                 Link link1  = mapper.map(link, Link.class);
@@ -90,6 +99,7 @@ public class MissionServiceImpl implements IMissionService {
                 linkRepository.save(link1);
             }
         }
+
 
         if(missionAddDto.getMember()!=null) {
             for (ProjectMemberDto pmd : missionAddDto.getMember()) {
@@ -110,6 +120,7 @@ public class MissionServiceImpl implements IMissionService {
                 }
             }
         }
+
 
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
@@ -153,6 +164,7 @@ public class MissionServiceImpl implements IMissionService {
         mission1.setLevel(mission.getLevel()+1);
         mission1.setMissionParent(mission);
         mission1.setProject(mission.getProject());
+        mission1.setStatus(Status.TO_DO);
         mission1.setAddedBy(loggedInEmail);
 
         try{
@@ -179,7 +191,6 @@ public class MissionServiceImpl implements IMissionService {
                 linkRepository.save(link1);
             }
         }
-
         if(missionAddDto.getMember()!=null) {
             for (ProjectMemberDto pmd : missionAddDto.getMember()) {
                 HashMap<String,Object> userMap1= isValidProjectMember(mission.getProject(),pmd.getEmail());
@@ -200,6 +211,9 @@ public class MissionServiceImpl implements IMissionService {
                 }
             }
         }
+
+
+
         return new ResponseEntity<>(missionRepository.save(mission1), HttpStatus.ACCEPTED);
 
     }
@@ -223,7 +237,10 @@ public class MissionServiceImpl implements IMissionService {
         HashMap<String, Object> missionMap = isValidMission(id);
         if (!(boolean) missionMap.get("isValid"))
             throw new MissionNotFoundException(" No Mission found with  mission id :" + id);
-        Mission mission = (Mission) missionMap.get("mission");
+        //Mission mission = (Mission) missionMap.get("mission");
+        Mission mission=missionRepository.findByMissionId(id).get();
+
+
 
 
         HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
@@ -235,19 +252,33 @@ public class MissionServiceImpl implements IMissionService {
         }
         MissionMember missionMember = (MissionMember) captainOrChiefOrCreatorOfMissionMap.get("missionMember");
 
-        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,projectMemberDto.getEmail());
-        if (!(boolean) missionMap.get("isValid")) {
+        HashMap<String, Object> memberMap = isValidProjectMember(mission.getProject(),projectMemberDto.getEmail());
+        Member member=(Member)memberMap.get("member");
 
-            ModelMapper mapper = new ModelMapper();
-            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-            MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
-            missionMember1.setAddedBy(loggedInEmail);
-            missionMember1.setMission(mission);
-            mission.addMissionMember(missionMember1);
-            missionMemberRepository.save(missionMember1);
-
-        }
+//if(!missionMemberRepository.findByMissionAndUserEmail(mission,projectMemberDto.getEmail()).isPresent()) {
+//    ModelMapper mapper = new ModelMapper();
+//    mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+//
+//<<<<<<< HEAD
+//            MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
+//            missionMember1.setAddedBy(loggedInEmail);
+//            missionMember1.setMission(mission);
+//            mission.addMissionMember(missionMember1);
+//            missionMemberRepository.save(missionMember1);
+//
+//        }
+//=======
+//    MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
+//    missionMember1.setAddedBy(loggedInEmail);
+//    missionMember1.setMission(mission);
+//    missionMember1.setUser(user1);
+//    missionMember1.setMember(member);
+//    mission.addMissionMember(missionMember1);
+//    userRepository.save(member.getUser());
+//    missionMemberRepository.save(missionMember1);
+//
+//}
+//>>>>>>> b6e9c7933e81d004cd6ca2951c683caf95d62496
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
 
@@ -380,7 +411,7 @@ public class MissionServiceImpl implements IMissionService {
 
         try {
 
-            mission.getNotes().remove(note);
+            mission.getMissionNotes().remove(note);
             noteRepository.delete(note);
         }catch(Exception ex) {
             throw new ProjectNoteNotFoundException("No note found with id  " + id);
@@ -480,7 +511,7 @@ public class MissionServiceImpl implements IMissionService {
 
         try {
 
-            mission.getLinks().remove(link);
+            mission.getMissionLinks().remove(link);
             linkRepository.delete(link);
         }catch(Exception ex) {
             throw new ProjectNoteNotFoundException("No link found with id  " + id);
