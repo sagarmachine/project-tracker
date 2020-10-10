@@ -10,10 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 @Getter
@@ -49,7 +46,12 @@ public class Member {
     Project project;
 
     @OneToMany(mappedBy = "member",cascade = {CascadeType.ALL})
-    List<MissionMember> missionMembers;
+    List<MissionMember> missionMembers=new ArrayList<>();
+
+    public void addMissionMember(MissionMember missionMember){
+        missionMember.setMember(this);
+        missionMembers.add(missionMember);
+    }
 
 
     public Member(String addedBy, Project project, User user, Authority authority, Date addedOn) {

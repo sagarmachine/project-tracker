@@ -22,9 +22,6 @@ public class MissionMember {
     @GeneratedValue
     long id;
 
-    @ManyToOne
-    @JsonIgnore
-    User user;
 
     @Enumerated(EnumType.STRING)
     Authority authority;

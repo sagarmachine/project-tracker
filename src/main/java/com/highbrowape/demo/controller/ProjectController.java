@@ -50,8 +50,9 @@ public class ProjectController {
     }
 
 
-    @GetMapping("/{id}dashboard/")
+    @GetMapping("/{id}/dashboard")
     public  ResponseEntity<?> getProjectDashboard(@PathVariable("id")String id, Principal principal){
+        System.out.println(12313);
         return projectService.getProjectDashboard(id,principal.getName());
     }
 

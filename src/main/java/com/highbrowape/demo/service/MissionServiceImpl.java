@@ -64,11 +64,13 @@ public class MissionServiceImpl implements IMissionService {
         mission.setProject(project);
         mission.setAddedBy(loggedInEmail);
 
-        try{
-            mission=missionRepository.save(mission);
-        }catch (Exception ex){
-            throw new RuntimeException(ex.getMessage());
-        }
+       // try{
+//        }catch (Exception ex){
+//            throw new RuntimeException(ex.getMessage());
+//        }
+        mission=missionRepository.save(mission);
+
+
         if(missionAddDto.getNotes()!=null) {
             for (NoteDto note : missionAddDto.getNotes()) {
                 Note note1  = mapper.map(note, Note.class);
@@ -95,18 +97,20 @@ public class MissionServiceImpl implements IMissionService {
 
                 if((boolean)userMap1.get("isValid"))  {
                     User user1= (User)userMap.get("user");
-                    Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndUserEmail(mission, pmd.getEmail());
+                    Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionMissionIdAndMemberUserEmail(mission.getMissionId(), pmd.getEmail());
                     if (optionalMissionMember.isPresent()) continue;
-                    MissionMember member = mapper.map(pmd, MissionMember.class);
-                    member.setAddedBy(loggedInEmail);
-                    member.setMission(mission);
-                    member.setUser(user1);
-                    mission.addMissionMember(member);
-                    userRepository.save(user1);
-                    missionMemberRepository.save(member);
+                    MissionMember missionMember = mapper.map(pmd, MissionMember.class);
+                    Member member=memberRepository.findByProjectProjectIdAndUserEmail(mission.getProject().getProjectId(),pmd.getEmail()).get();
+
+                    member.addMissionMember(missionMember);
+                    missionMember.setAddedBy(loggedInEmail);
+                    missionMember.setMission(mission);
+                    mission.addMissionMember(missionMember);
+                    memberRepository.save(member);
                 }
             }
         }
+
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
 
@@ -130,6 +134,9 @@ public class MissionServiceImpl implements IMissionService {
         if (!(boolean) missionMap.get("isValid"))
             throw new MissionNotFoundException(" No Mission found with mission id :" + id);
         Mission mission = (Mission) missionMap.get("mission");
+
+        System.out.println(mission.getMissionId());
+        System.out.println(id);
 
         HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
         HashMap<String, Object> captainOrChiefOrCreatorOfMissionMap=isCaptainOrChiefOrCreatorOfMission(mission, loggedInEmail);
@@ -179,15 +186,17 @@ public class MissionServiceImpl implements IMissionService {
 
                 if((boolean)userMap1.get("isValid"))  {
                     User user1= (User)userMap.get("user");
-                    Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndUserEmail(mission, pmd.getEmail());
-                    if (optionalMissionMember.isPresent()) continue;
-                    MissionMember member = mapper.map(pmd, MissionMember.class);
-                    member.setAddedBy(loggedInEmail);
-                    member.setMission(mission1);
-                    member.setUser(user1);
-                    mission1.addMissionMember(member);
-                    userRepository.save(user1);
-                    missionMemberRepository.save(member);
+                    Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionMissionIdAndMemberUserEmail(mission.getMissionId(), pmd.getEmail());
+                    if (optionalMissionMember.isPresent())
+                        continue;
+                    MissionMember missionMember = mapper.map(pmd, MissionMember.class);
+                    Member member=memberRepository.findByProjectProjectIdAndUserEmail(mission.getProject().getProjectId(),pmd.getEmail()).get();
+
+                    member.addMissionMember(missionMember);
+                     missionMember.setAddedBy(loggedInEmail);
+                    missionMember.setMission(mission1);
+                    mission1.addMissionMember(missionMember);
+                    memberRepository.save(member);
                 }
             }
         }
@@ -235,8 +244,6 @@ public class MissionServiceImpl implements IMissionService {
             MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
             missionMember1.setAddedBy(loggedInEmail);
             missionMember1.setMission(mission);
-            missionMember1.setUser(user1);
-
             mission.addMissionMember(missionMember1);
             missionMemberRepository.save(missionMember1);
 
@@ -568,7 +575,7 @@ public class MissionServiceImpl implements IMissionService {
 
     public HashMap<String ,Object> isCaptainOrChiefOrCreatorOfMission(Mission mission,String loggedInEmail) {
         HashMap<String,Object> result= new HashMap<>();
-        Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndUserEmail(mission,loggedInEmail);
+        Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndMemberUserEmail(mission,loggedInEmail);
         if (optionalMissionMember.isPresent()) {
             MissionMember missionMember=optionalMissionMember.get();
             if (missionMember.getAuthority() == Authority.CREATOR || missionMember.getAuthority() == Authority.CHIEF||missionMember.getAuthority()==Authority.CAPTAIN) {
@@ -583,7 +590,7 @@ public class MissionServiceImpl implements IMissionService {
 
     public HashMap<String ,Object> isValidMissionMember(Mission mission,String email) {
         HashMap<String,Object> result= new HashMap<>();
-        Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndUserEmail(mission,email);
+        Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionAndMemberUserEmail(mission,email);
         if (optionalMissionMember.isPresent()) {
             MissionMember missionMember=optionalMissionMember.get();
                 result.put("isValid", true);

@@ -2,6 +2,7 @@ package com.highbrowape.demo.service;
 
 
 import com.highbrowape.demo.dto.input.*;
+import com.highbrowape.demo.dto.output.MissionDto;
 import com.highbrowape.demo.dto.output.ProjectDashboardDto;
 import com.highbrowape.demo.dto.output.ProjectListDto;
 import com.highbrowape.demo.entity.*;
@@ -36,6 +37,9 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Autowired
     ProjectNoteRepository projectNoteRepository;
+
+    @Autowired
+    MissionRepository missionRepository;
 
     public ResponseEntity<?> addProject(ProjectAdd projectAdd, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
@@ -245,7 +249,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
     @Override
-    public ResponseEntity<ProjectDashboardDto> getProjectDashboard(String projectId, String loggedInEmail) {
+    public ResponseEntity<?> getProjectDashboard(String projectId, String loggedInEmail) {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
@@ -254,12 +258,80 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
 
         Project project=projectOptional.get();
+
+        List<MissionDto> list= new ArrayList<>();
+
+        HashMap<Long, MissionDto> hashMap= new HashMap<>();
+
+        Queue<Mission> queue = new LinkedList<>();
+
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        ProjectDashboardDto pdd=mapper.map(project,ProjectDashboardDto.class);
 
-        return new ResponseEntity<>(pdd,HttpStatus.OK);
+        for(Mission m:missionRepository.findByProjectProjectIdAndLevel(projectId,1))
+              queue.add(m);
+
+        while(!queue.isEmpty()){
+
+
+            Mission mission= queue.remove();
+
+            System.out.println(mission.getMissionId()+"===");
+
+            if(mission.getMissions()!=null)
+            for (Mission missionTemp:mission.getMissions()) {
+                queue.add(missionTemp);
+                System.out.println(missionTemp.getMissionId()+" added");
+            }
+
+
+            MissionDto missionDto=mapper.map(mission,MissionDto.class);
+
+            if(mission.getMissionParent()!=null)
+            missionDto.setParentId(mission.getMissionParent().getMissionId());
+
+            missionDto.setMemberCount(mission.getMissionMembers().size());
+            missionDto.setNoteCount(mission.getNotes().size());
+//            missionDto.setObjectiveCount(mission.getMissionInsight().getObjectiveCount());
+//            missionDto.setCompletedObjectiveCount(mission.getMissionInsight().getCompletedObjectiveCount());
+            missionDto.setMissionInsight(mission.getMissionInsight());
+            missionDto.setLinkCount(mission.getLinks().size());
+            missionDto.setConversationCount(mission.getConversations().size());
+            missionDto.setChildren(new ArrayList<>());
+
+
+            if(mission.getMissionParent()!=null && mission.getMissionParent().getMissionId()!=null)
+            {
+//                System.out.println(hashMap);
+               System.out.println("ADDING ..... "+mission.getMissionId()+"   "+mission.getMissionParent().getMissionId());
+
+                MissionDto missionDtoTemp = hashMap.get(mission.getMissionParent().getId());
+                if(missionDtoTemp.getChildren()==null)
+                    missionDtoTemp.setChildren(new ArrayList<>());
+                missionDtoTemp.getChildren().add(missionDto);
+            }else{
+                list.add(missionDto);
+            }
+
+            System.out.println(queue);
+
+             hashMap.put(mission.getId(),missionDto);
+
+        }
+
+        ProjectDashboardDto projectDashboardDto=mapper.map(project,ProjectDashboardDto.class);
+        projectDashboardDto.setProjectInsight(project.getProjectInsight());
+
+        HashMap<String, Object> result= new HashMap<>();
+        result.put("project",projectDashboardDto);
+        result.put("children",list);
+
+        return new ResponseEntity<>(result,HttpStatus.OK);
+
+
     }
+
+
 
     private boolean isValidMember(String projectId, String loggedInEmail) {
 

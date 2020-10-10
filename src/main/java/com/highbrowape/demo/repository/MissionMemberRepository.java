@@ -9,5 +9,7 @@ import java.util.Optional;
 
 public interface MissionMemberRepository extends JpaRepository<MissionMember,Long> {
 
-    Optional<MissionMember> findByMissionAndUserEmail(Mission mission, String email);
+    Optional<MissionMember> findByMissionAndMemberUserEmail(Mission mission, String email);
+
+    Optional<MissionMember> findByMissionMissionIdAndMemberUserEmail(String missionId, String email);
 }

@@ -5,9 +5,14 @@ import com.highbrowape.demo.entity.Category;
 import com.highbrowape.demo.entity.MissionInsight;
 import com.highbrowape.demo.entity.Priority;
 import com.highbrowape.demo.entity.Status;
+import lombok.Data;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
+@Data
 public class MissionDto {
     long id;
 
@@ -47,11 +52,12 @@ public class MissionDto {
 
     int noteCount;
 
-    int objectiveCount;
+//    int objectiveCount;
+//    int completedObjectiveCount;
 
     int conversationCount;
 
-    List<MissionDto> children;
+    List<MissionDto> children= new ArrayList<>();
 
     MissionInsight missionInsight;
 

@@ -17,7 +17,5 @@ public class ProjectDashboardDto {
 
     ProjectInsight projectInsight;
 
-    List<MissionDto> missions;
-
 
 }

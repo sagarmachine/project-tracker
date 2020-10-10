@@ -53,10 +53,6 @@ public class User {
     @JsonIgnore
     Set<Member> members;
 
-    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
-    @JsonIgnore
-    Set<MissionMember> missionMembers;
-
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;

@@ -26,9 +26,9 @@ public class MissionController {
 
     }
 
-    @PostMapping("/level/n/{id}")
-    public ResponseEntity<?> addMissionAtLevelN(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") String id,Principal principal){
-
+    @PostMapping("/level/n")
+    public ResponseEntity<?> addMissionAtLevelN(@Valid @RequestBody MissionAddDto missionAddDto, @RequestParam("id") String id,Principal principal){
+        System.out.println(id);
         return missionService.addMissionAtLevelN(missionAddDto,id,principal.getName());
     }
 

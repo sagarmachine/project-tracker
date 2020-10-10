@@ -75,7 +75,7 @@ public class Mission implements Serializable {
     @JsonIgnore
     Mission missionParent;
 
-    @OneToMany(mappedBy = "missionParent",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "missionParent",cascade = {CascadeType.REMOVE})
     Set<Mission> missions;
 
     @ManyToOne
@@ -83,22 +83,22 @@ public class Mission implements Serializable {
     @JsonIgnore
     Project project;
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<MissionMember> missionMembers;
+    @OneToMany(mappedBy = "mission")
+    List<MissionMember> missionMembers=new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Note> notes= new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Link> links=new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Progress> progress= new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Objective> objectives= new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Conversation> conversations= new ArrayList<>();
 
 
