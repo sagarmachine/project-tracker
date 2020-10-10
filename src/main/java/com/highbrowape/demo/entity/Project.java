@@ -27,6 +27,7 @@ public class Project {
     @Column(nullable = false,unique=true)
     String projectId;
 
+
     @Column(nullable = false)
     String projectName;
 
@@ -57,6 +58,10 @@ public class Project {
     @JoinColumn
     @JsonIgnore
     User user;
+
+    @OneToOne
+    @JoinColumn
+    ProjectInsight projectInsight;
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     Set<Member> members= new HashSet<>();

@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Mission {
+public class Mission implements Serializable {
 
     @Id
     @GeneratedValue
@@ -66,6 +67,10 @@ public class Mission {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date endingDate;
 
+
+    @OneToOne
+    @JoinColumn
+    MissionInsight missionInsight;
 
     @ManyToOne
     @JoinColumn
