@@ -2,11 +2,9 @@ package com.highbrowape.demo.dto.output;
 
 
 import com.highbrowape.demo.entity.Mission;
+import com.highbrowape.demo.entity.ProjectInsight;
 import lombok.Data;
-
-import javax.persistence.Column;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class ProjectDashboardDto {
@@ -17,7 +15,9 @@ public class ProjectDashboardDto {
 
     String projectName;
 
-    Set<Mission> missions;
+    ProjectInsight projectInsight;
+
+    List<MissionDto> missions;
 
 
 }
