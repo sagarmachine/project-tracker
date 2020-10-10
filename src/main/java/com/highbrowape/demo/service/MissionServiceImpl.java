@@ -40,6 +40,9 @@ public class MissionServiceImpl implements IMissionService {
     @Autowired
     LinkRepository linkRepository;
 
+    @Autowired
+    IInsightService insightService;
+
 
     @Override
     public ResponseEntity<?> addMissionAtLevel1(MissionAddDto missionAddDto, String id, String loggedInEmail) {
@@ -121,6 +124,9 @@ public class MissionServiceImpl implements IMissionService {
             }
         }
 
+        MissionInsight missionInsight= new MissionInsight();
+        missionInsight.setMission(mission);;
+        mission.setMissionInsight(missionInsight);
 
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
@@ -211,7 +217,9 @@ public class MissionServiceImpl implements IMissionService {
                 }
             }
         }
-
+        MissionInsight missionInsight= new MissionInsight();
+        missionInsight.setMission(mission1);;
+        mission1.setMissionInsight(missionInsight);
 
 
         return new ResponseEntity<>(missionRepository.save(mission1), HttpStatus.ACCEPTED);

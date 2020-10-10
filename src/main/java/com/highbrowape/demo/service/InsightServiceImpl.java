@@ -1,14 +1,17 @@
 package com.highbrowape.demo.service;
 
-import com.highbrowape.demo.entity.Mission;
-import com.highbrowape.demo.entity.Project;
+import com.highbrowape.demo.entity.*;
 import com.highbrowape.demo.repository.MissionRepository;
 import com.highbrowape.demo.repository.ProjectRepository;
+import com.highbrowape.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+
+@Service
 public class InsightServiceImpl implements IInsightService {
 
 
@@ -17,6 +20,9 @@ public class InsightServiceImpl implements IInsightService {
 
     @Autowired
     ProjectRepository projectRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
 
     @Override
@@ -31,6 +37,20 @@ public class InsightServiceImpl implements IInsightService {
            missionRepository.save(mission);
            parent=parent.getMissionParent();
        }
+
+
+       List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+
+       for (MissionMember missionsMember :missionsMembers){
+
+           User user = missionsMember.getMember().getUser();
+
+           user.getUserInsights().setCompletedObjectiveCount(user.getUserInsights().getCompletedObjectiveCount()+1);
+           userRepository.save(user);
+
+       }
+
 
         Project project=mission.getProject();
 
@@ -52,6 +72,18 @@ public class InsightServiceImpl implements IInsightService {
             parent=parent.getMissionParent();
         }
 
+
+        List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+        for (MissionMember missionsMember :missionsMembers){
+
+            User user = missionsMember.getMember().getUser();
+
+            user.getUserInsights().setObjectiveCount(user.getUserInsights().getObjectiveCount()+1);
+            userRepository.save(user);
+
+        }
+
         Project project=mission.getProject();
 
         project.getProjectInsight().setObjectiveCount(project.getProjectInsight().getObjectiveCount()+1);
@@ -59,6 +91,19 @@ public class InsightServiceImpl implements IInsightService {
         projectRepository.save(project);
 
 
+
+    }
+
+    @Override
+    public void userActionUpdate(String loggedInEmail, String comment) {
+
+        User user = userRepository.findByEmail(loggedInEmail).get();
+
+        UserAction userAction = new UserAction();
+        userAction.setComment(comment);
+        user.addUserAction(userAction);
+
+        userRepository.save(user);
 
     }
 }

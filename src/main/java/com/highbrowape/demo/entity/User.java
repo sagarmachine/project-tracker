@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -45,6 +46,15 @@ public class User {
     @Column(unique=true,length=10)
     String phoneNumber;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    Date addedOn;
+
+
+    @OneToOne(cascade =CascadeType.ALL)
+    @JoinColumn
+    UserInsights userInsights;
+
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
     @JsonIgnore
     Set<Project> projects;
@@ -53,9 +63,16 @@ public class User {
     @JsonIgnore
     Set<Member> members;
 
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    Date addedOn;
+    @OneToMany(mappedBy = "user", cascade=CascadeType.ALL)
+    Set<UserAction> userActions= new HashSet<>();
+
+    public void addUserAction(UserAction userAction){
+
+        userActions.add(userAction);
+        userAction.setUser(this);
+
+    }
+
 
 
 }

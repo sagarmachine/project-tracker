@@ -3,6 +3,7 @@ package com.highbrowape.demo.service;
 import com.highbrowape.demo.dto.input.UserLogin;
 import com.highbrowape.demo.dto.input.UserRegister;
 import com.highbrowape.demo.entity.User;
+import com.highbrowape.demo.entity.UserInsights;
 import com.highbrowape.demo.exception.InvalidCredentials;
 import com.highbrowape.demo.exception.UserAlreadyExist;
 import com.highbrowape.demo.repository.UserRepository;
@@ -72,6 +73,11 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setFirstName(user.getLastName());
 
+
+        UserInsights userInsights = new UserInsights();
+
+        userInsights.setUser(user);
+        user.setUserInsights(userInsights);
 
           user= userRepository.save(user);
 

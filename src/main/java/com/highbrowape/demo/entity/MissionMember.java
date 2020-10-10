@@ -21,7 +21,7 @@ public class MissionMember {
     @Id
     @GeneratedValue
     long id;
-    
+
     @Enumerated(EnumType.STRING)
     Authority authority;
 
