@@ -27,6 +27,8 @@ public class Member {
     @GeneratedValue
     long id;
 
+    String email;
+
     @ManyToOne
     @JoinColumn
     User user;

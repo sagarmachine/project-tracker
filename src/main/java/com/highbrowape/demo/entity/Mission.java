@@ -26,6 +26,8 @@ public class Mission {
     @GeneratedValue
     long id;
 
+    String addedBy;
+
     @Column(nullable = false)
     String name;
 
@@ -46,8 +48,8 @@ public class Mission {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
 
-    @Column(nullable = false)
-    String addedBy;
+
+
 
     @Enumerated(EnumType.STRING)
     Status status;
@@ -79,13 +81,13 @@ public class Mission {
     Project project;
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<MissionMember> missionMembers;
+    List<MissionMember> missionMembers=new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Note> notes= new ArrayList<>();
+    List<Note> missionNotes= new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<Link> links=new ArrayList<>();
+    List<Link> missionLinks=new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
     List<Progress> progress= new ArrayList<>();
@@ -103,11 +105,11 @@ public class Mission {
     }
 
     public void addLink(Link link){
-        links.add(link);
+        missionLinks.add(link);
         link.setMission(this);
     }
     public void addNote(Note note){
-        notes.add(note);
+        missionNotes.add(note);
         note.setMission(this);
     }
     public void addConversations(Conversation conversation){

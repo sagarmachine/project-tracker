@@ -20,7 +20,7 @@ public class MissionController {
 
 
     @PostMapping("/level/1/{id}")
-    public ResponseEntity<?> addMissionAtLevel1(@Valid @RequestBody MissionAddDto missionAddDto, @PathVariable("id") String id,Principal principal){
+    public ResponseEntity<?> addMissionAtLevel1( @RequestBody MissionAddDto missionAddDto, @PathVariable("id") String id,Principal principal){
 
         return missionService.addMissionAtLevel1(missionAddDto,id,principal.getName());
 
@@ -37,7 +37,7 @@ public class MissionController {
 
 
     @GetMapping("/{id}/member")
-    public ResponseEntity<?>  getProjectMember(@PathVariable("id")String id,  Principal principal){
+    public ResponseEntity<?>  getMissionMember(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionMembers(id,principal.getName());
     }
     @PostMapping("/{id}/member")

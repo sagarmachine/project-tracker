@@ -22,6 +22,10 @@ public class MissionMember {
     @GeneratedValue
     long id;
 
+
+    String email;
+
+
     @ManyToOne
     @JsonIgnore
     User user;
