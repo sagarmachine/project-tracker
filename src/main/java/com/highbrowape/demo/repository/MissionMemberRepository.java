@@ -12,4 +12,5 @@ public interface MissionMemberRepository extends JpaRepository<MissionMember,Lon
     Optional<MissionMember> findByMissionAndMemberUserEmail(Mission mission, String email);
 
     Optional<MissionMember> findByMissionMissionIdAndMemberUserEmail(String missionId, String email);
+
 }

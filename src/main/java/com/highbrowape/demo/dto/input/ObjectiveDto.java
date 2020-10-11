@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class ObjectiveDto {
 
-    long id;
+
 
     String description;
 

@@ -43,6 +43,9 @@ public class MissionServiceImpl implements IMissionService {
     @Autowired
     IInsightService insightService;
 
+    @Autowired
+    ObjectiveRepository objectiveRepository;
+
 
     @Override
     public ResponseEntity<?> addMissionAtLevel1(MissionAddDto missionAddDto, String id, String loggedInEmail) {
@@ -125,7 +128,7 @@ public class MissionServiceImpl implements IMissionService {
         }
 
         MissionInsight missionInsight= new MissionInsight();
-        missionInsight.setMission(mission);;
+        missionInsight.setMission(mission);
         mission.setMissionInsight(missionInsight);
 
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
@@ -218,7 +221,7 @@ public class MissionServiceImpl implements IMissionService {
             }
         }
         MissionInsight missionInsight= new MissionInsight();
-        missionInsight.setMission(mission1);;
+        missionInsight.setMission(mission1);
         mission1.setMissionInsight(missionInsight);
 
 
@@ -245,9 +248,12 @@ public class MissionServiceImpl implements IMissionService {
         HashMap<String, Object> missionMap = isValidMission(id);
         if (!(boolean) missionMap.get("isValid"))
             throw new MissionNotFoundException(" No Mission found with  mission id :" + id);
-        //Mission mission = (Mission) missionMap.get("mission");
-        Mission mission=missionRepository.findByMissionId(id).get();
+        Mission mission = (Mission) missionMap.get("mission");
 
+
+        HashMap<String, Object> memberMap = isValidProjectMember(mission.getProject(),projectMemberDto.getEmail());
+        if(!(boolean)memberMap.get("isValid")) throw new MemberNotFoundException(projectMemberDto.getEmail()+" is not a member of the project ");
+        Member member=(Member)memberMap.get("member");
 
 
 
@@ -258,36 +264,26 @@ public class MissionServiceImpl implements IMissionService {
             if (!(boolean) captainOrChiefOrCreatorOfMissionMap.get("isValid"))
                 throw new InvalidAuthorityException(loggedInEmail + "  is not allowed to add member to the mission ");
         }
-        MissionMember missionMember = (MissionMember) captainOrChiefOrCreatorOfMissionMap.get("missionMember");
 
-        HashMap<String, Object> memberMap = isValidProjectMember(mission.getProject(),projectMemberDto.getEmail());
-        Member member=(Member)memberMap.get("member");
 
-//if(!missionMemberRepository.findByMissionAndUserEmail(mission,projectMemberDto.getEmail()).isPresent()) {
-//    ModelMapper mapper = new ModelMapper();
-//    mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-//
-//<<<<<<< HEAD
-//            MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
-//            missionMember1.setAddedBy(loggedInEmail);
-//            missionMember1.setMission(mission);
-//            mission.addMissionMember(missionMember1);
-//            missionMemberRepository.save(missionMember1);
-//
-//        }
-//=======
-//    MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
-//    missionMember1.setAddedBy(loggedInEmail);
-//    missionMember1.setMission(mission);
-//    missionMember1.setUser(user1);
-//    missionMember1.setMember(member);
-//    mission.addMissionMember(missionMember1);
-//    userRepository.save(member.getUser());
-//    missionMemberRepository.save(missionMember1);
-//
-//}
-//>>>>>>> b6e9c7933e81d004cd6ca2951c683caf95d62496
-        return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
+
+    if(!missionMemberRepository.findByMissionAndMemberUserEmail(mission,projectMemberDto.getEmail()).isPresent()) {
+
+            missionMember1.setAddedBy(loggedInEmail);
+            missionMember1.setMission(mission);
+            missionMember1.setMember(member);
+            mission.addMissionMember(missionMember1);
+             userRepository.save(member.getUser());
+             missionRepository.save(mission);
+
+        }
+
+        return new ResponseEntity<>(missionMemberRepository.save(missionMember1), HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -295,6 +291,7 @@ public class MissionServiceImpl implements IMissionService {
 
     MissionMember missionMember=updateAndRemoveMemberFromMissionPreProcessing(id,loggedInEmail);
         missionMember.setAuthority(authority);
+        missionMember.setUpdatedOn(new java.util.Date());
 
         return new ResponseEntity<>(missionMemberRepository.save(missionMember),HttpStatus.ACCEPTED);
     }
@@ -307,10 +304,7 @@ public class MissionServiceImpl implements IMissionService {
         return new ResponseEntity<>("mission Member Deleted Succesfully ",HttpStatus.OK);
     }
 
-    @Override
-    public ResponseEntity<?> getMissionNotes(String id, String name) {
-        return null;
-    }
+
 
     private MissionMember updateAndRemoveMemberFromMissionPreProcessing(long id,String loggedInEmail){
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
@@ -335,6 +329,31 @@ public class MissionServiceImpl implements IMissionService {
         return missionMember;
     }
 
+
+    @Override
+    public ResponseEntity<?> getMissionNotes(String id, String loggedInEmail) {
+
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> missionMap = isValidMission(id);
+        if (!(boolean) missionMap.get("isValid"))
+            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+        Mission mission = (Mission) missionMap.get("mission");
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
+
+
+        return new ResponseEntity<>(noteRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+    }
+
     @Override
     public ResponseEntity<?> addNoteToMission(NoteDto noteDto, String id, String loggedInEmail) {
         HashMap<String, Object> userMap = isValidUser(loggedInEmail);
@@ -347,9 +366,11 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission = (Mission) missionMap.get("mission");
 
         HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-        if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-        MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
-
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
 
 
 
@@ -381,21 +402,22 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission=note.getMission();
 
         HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-        if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-        MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
-
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+note.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
 
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Note note1  = mapper.map(noteDto, Note.class);
         note1.setId(note.getId());
         note1.setMission(mission);
-        note1.setAddedBy(loggedInEmail);
-        note1.setAddedOn(new java.util.Date());
-        noteRepository.save(note1);
+        note1.setUpdatedOn(new java.util.Date());
 
 
-        return new ResponseEntity<>("Note Updated",HttpStatus.ACCEPTED);
+
+        return new ResponseEntity<>(noteRepository.save(note1),HttpStatus.ACCEPTED);
 
 
     }
@@ -413,10 +435,12 @@ public class MissionServiceImpl implements IMissionService {
 
             Mission mission=note.getMission();
 
-            HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-            if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-            MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
-
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+note.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
         try {
 
             mission.getMissionNotes().remove(note);
@@ -431,8 +455,28 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionLinks(String id, String name) {
-        return null;
+    public ResponseEntity<?> getMissionLinks(String id, String loggedInEmail) {
+
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> missionMap = isValidMission(id);
+        if (!(boolean) missionMap.get("isValid"))
+            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+        Mission mission = (Mission) missionMap.get("mission");
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
+
+
+        return new ResponseEntity<>(linkRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+
     }
 
     @Override
@@ -447,9 +491,12 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission = (Mission) missionMap.get("mission");
 
         HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-        if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-        MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
 
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
 
 
 
@@ -482,20 +529,19 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission=link.getMission();
 
         HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-        if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-        MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
-
-
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+link.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Link link1 = mapper.map(linkDto, Link.class);
         link1.setId(link.getId());
         link1.setMission(mission);
-        link1.setAddedBy(loggedInEmail);
-        link1.setAddedOn(new java.util.Date());
-        linkRepository.save(link1);
+        link1.setUpdatedOn(new java.util.Date());
 
-        return new ResponseEntity<>("Link Updated",HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(linkRepository.save(link1),HttpStatus.ACCEPTED);
 
 
     }
@@ -514,9 +560,12 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission=link.getMission();
 
         HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
-        if(!(boolean)missionMemberMap.get("isValid")) throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
-        MissionMember missionMember=(MissionMember)missionMemberMap.get("missionMember");
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
 
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+link.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
         try {
 
             mission.getMissionLinks().remove(link);
@@ -530,23 +579,128 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public ResponseEntity<?> getMissionObjectives(String id, String name) {
-        return null;
+    public ResponseEntity<?> getMissionObjectives(String id, String loggedInEmail) {
+
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> missionMap = isValidMission(id);
+        if (!(boolean) missionMap.get("isValid"))
+            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+        Mission mission = (Mission) missionMap.get("mission");
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
+
+
+        return new ResponseEntity<>(objectiveRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+
     }
 
     @Override
-    public ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String name) {
-        return null;
+    public ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> missionMap = isValidMission(id);
+        if (!(boolean) missionMap.get("isValid"))
+            throw new MissionNotFoundException(" No Mission found with  id :" + id);
+        Mission mission = (Mission) missionMap.get("mission");
+
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
+        }
+
+
+
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Objective objective = mapper.map(objectiveDto, Objective.class);
+        objective.setMission(mission);
+        objective.setAddedOn(new java.util.Date());
+        mission.addObjective(objective);
+        missionRepository.save(mission);
+
+
+        return new ResponseEntity<>(objectiveRepository.save(objective),HttpStatus.ACCEPTED);
+
     }
 
     @Override
-    public ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name) {
-        return null;
+    public ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Objective> objectiveOptional=objectiveRepository.findById(id);
+        if(!objectiveOptional.isPresent()) throw new ObjectiveNotFoundException("No objective found with  id  "+ id);
+
+        Objective objective=objectiveOptional.get();
+
+        Mission mission=objective.getMission();
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+objective.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Objective objective1 = mapper.map(objectiveDto, Objective.class);
+        objective1.setId(objective.getId());
+        objective1.setUpdatedOn(new java.util.Date());
+
+
+        return new ResponseEntity<>(objectiveRepository.save(objective1),HttpStatus.ACCEPTED);
+
+
     }
 
     @Override
-    public ResponseEntity<?> removeObjectiveFromMission(Long id, String name) {
-        return null;
+    public ResponseEntity<?> removeObjectiveFromMission(Long id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Objective> objectiveOptional=objectiveRepository.findById(id);
+        if(!objectiveOptional.isPresent()) throw new ObjectiveNotFoundException("No objective found with  id  "+ id);
+
+        Objective objective=objectiveOptional.get();
+
+        Mission mission=objective.getMission();
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+objective.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
+        try {
+
+            mission.getObjectives().remove(objective);
+            objectiveRepository.delete(objective);
+        }catch(Exception ex) {
+            throw new ObjectiveNotFoundException("No objective found with id  " + id);
+        }
+
+        return new ResponseEntity<>("MISSION LINK DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
+
     }
 
     public HashMap<String ,Object> isValidUser(String email) {
