@@ -11,10 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -85,25 +82,16 @@ public class Mission implements Serializable {
     @JsonIgnore
     Project project;
 
-<<<<<<< HEAD
+
     @OneToMany(mappedBy = "mission")
     List<MissionMember> missionMembers=new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Note> notes= new ArrayList<>();
-
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Link> links=new ArrayList<>();
-=======
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
-    List<MissionMember> missionMembers=new ArrayList<>();
-
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
     List<Note> missionNotes= new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Link> missionLinks=new ArrayList<>();
->>>>>>> b6e9c7933e81d004cd6ca2951c683caf95d62496
+
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Progress> progress= new ArrayList<>();
@@ -114,6 +102,14 @@ public class Mission implements Serializable {
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Conversation> conversations= new ArrayList<>();
 
+    @OneToMany(mappedBy = "mission",cascade =CascadeType.REMOVE)
+    Set<MissionMemberInsight> missionMemberInsights= new HashSet<>();
+
+
+    public void addMissionMemberInsight(MissionMemberInsight missionMemberInsight){
+        missionMemberInsights.add(missionMemberInsight);
+        missionMemberInsight.setMission(this);
+    }
 
     public void addMissionMember(MissionMember missionMember){
         missionMembers.add(missionMember);

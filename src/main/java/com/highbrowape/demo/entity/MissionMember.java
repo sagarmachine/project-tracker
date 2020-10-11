@@ -45,4 +45,8 @@ public class MissionMember {
     @JoinColumn
     @JsonIgnore
     Member member;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn
+    MissionMemberInsight missionMemberInsight;
 }

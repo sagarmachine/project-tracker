@@ -55,6 +55,9 @@ public class User {
     @JoinColumn
     UserInsights userInsights;
 
+
+
+
     @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
     @JsonIgnore
     Set<Project> projects;

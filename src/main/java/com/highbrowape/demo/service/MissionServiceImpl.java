@@ -119,6 +119,13 @@ public class MissionServiceImpl implements IMissionService {
                     missionMember.setAddedBy(loggedInEmail);
                     missionMember.setMission(mission);
                     mission.addMissionMember(missionMember);
+
+                    MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+                    missionMemberInsight.setMissionMember(missionMember);
+                    missionMember.setMissionMemberInsight(missionMemberInsight);
+                    mission.addMissionMemberInsight(missionMemberInsight);
+
+
                     memberRepository.save(member);
                 }
             }
@@ -213,6 +220,12 @@ public class MissionServiceImpl implements IMissionService {
                      missionMember.setAddedBy(loggedInEmail);
                     missionMember.setMission(mission1);
                     mission1.addMissionMember(missionMember);
+
+                    MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+                    missionMemberInsight.setMissionMember(missionMember);
+                    missionMember.setMissionMemberInsight(missionMemberInsight);
+                    mission1.addMissionMemberInsight(missionMemberInsight);
+
                     memberRepository.save(member);
                 }
             }

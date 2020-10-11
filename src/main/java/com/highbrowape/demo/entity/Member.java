@@ -50,6 +50,12 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = {CascadeType.ALL})
     List<MissionMember> missionMembers=new ArrayList<>();
 
+
+
+    @OneToOne(cascade =CascadeType.ALL)
+    @JoinColumn
+    MemberInsight memberInsight;
+
     public void addMissionMember(MissionMember missionMember){
         missionMember.setMember(this);
         missionMembers.add(missionMember);
