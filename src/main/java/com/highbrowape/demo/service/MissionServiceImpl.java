@@ -727,6 +727,11 @@ public class MissionServiceImpl implements IMissionService {
 
     }
 
+    @Override
+    public void updateObjectiveStatus(Long id, Status status, String loggedInEmail) {
+
+    }
+
     public HashMap<String ,Object> isValidUser(String email) {
 
         HashMap<String,Object> result= new HashMap<>();

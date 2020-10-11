@@ -2,6 +2,7 @@ package com.highbrowape.demo.service;
 
 import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.Authority;
+import com.highbrowape.demo.entity.Status;
 import org.springframework.http.ResponseEntity;
 
 public interface IMissionService {
@@ -31,4 +32,5 @@ public interface IMissionService {
     ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String name);
     ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name);
     ResponseEntity<?> removeObjectiveFromMission(Long id, String name);
+    void updateObjectiveStatus(Long id, Status status,String loggedInEmail );
 }

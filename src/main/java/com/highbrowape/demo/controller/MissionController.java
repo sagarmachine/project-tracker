@@ -3,6 +3,7 @@ package com.highbrowape.demo.controller;
 
 import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.Authority;
+import com.highbrowape.demo.entity.Status;
 import com.highbrowape.demo.service.IMissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -116,6 +117,12 @@ public class MissionController {
 
 
         return missionService.removeObjectiveFromMission(id,principal.getName());
+    }
+
+    @PutMapping("/objective/{id}/status/{value}")
+    public void updateObjectiveStatus(@PathVariable("id")Long id, @PathVariable("value")Status value,Principal principal){
+
+        missionService.updateObjectiveStatus(id,value,principal.getName());
     }
 
 
