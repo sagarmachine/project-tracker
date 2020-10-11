@@ -64,8 +64,8 @@ public class Project {
     ProjectInsight projectInsight;
 
 
-    @OneToMany(mappedBy = "project",cascade =CascadeType.REMOVE)
-    Set<MemberInsight> memberInsights= new HashSet<>();
+//    @OneToMany(mappedBy = "project",cascade =CascadeType.REMOVE)
+//    Set<MemberInsight> memberInsights= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
     Set<Member> members= new HashSet<>();
@@ -81,10 +81,10 @@ public class Project {
 
 
 
-    public void addUserProjectObjectiveInsight(MemberInsight memberInsight){
-        memberInsights.add(memberInsight);
-        memberInsight.setProject(this);
-    }
+//    public void addUserProjectObjectiveInsight(MemberInsight memberInsight){
+//        memberInsights.add(memberInsight);
+//        memberInsight.setProject(this);
+//    }
 
     public void addMember(Member member){
         members.add(member);

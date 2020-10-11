@@ -28,6 +28,11 @@ public class MissionServiceImpl implements IMissionService {
     @Autowired
     MissionRepository missionRepository;
 
+
+    @Autowired
+    MissionInsightRepoistory missionInsightRepoistory;
+
+
     @Autowired
     MemberRepository memberRepository;
 
@@ -45,6 +50,9 @@ public class MissionServiceImpl implements IMissionService {
 
     @Autowired
     ObjectiveRepository objectiveRepository;
+
+    @Autowired
+    MissionMemberInsightRepository missionMemberInsightRepository;
 
 
     @Override
@@ -126,7 +134,7 @@ public class MissionServiceImpl implements IMissionService {
                     MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
                     missionMemberInsight.setMissionMember(missionMember);
                     missionMember.setMissionMemberInsight(missionMemberInsight);
-                    mission.addMissionMemberInsight(missionMemberInsight);
+                 //   mission.addMissionMemberInsight(missionMemberInsight);
 
 
                     memberRepository.save(member);
@@ -137,6 +145,8 @@ public class MissionServiceImpl implements IMissionService {
         MissionInsight missionInsight= new MissionInsight();
         missionInsight.setMission(mission);
         mission.setMissionInsight(missionInsight);
+
+        missionInsightRepoistory.save(missionInsight);
 
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
     }
@@ -227,7 +237,7 @@ public class MissionServiceImpl implements IMissionService {
                     MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
                     missionMemberInsight.setMissionMember(missionMember);
                     missionMember.setMissionMemberInsight(missionMemberInsight);
-                    mission1.addMissionMemberInsight(missionMemberInsight);
+                   // mission1.addMissionMemberInsight(missionMemberInsight);
 
                     memberRepository.save(member);
                 }
@@ -237,6 +247,7 @@ public class MissionServiceImpl implements IMissionService {
         missionInsight.setMission(mission1);
         mission1.setMissionInsight(missionInsight);
 
+        missionInsightRepoistory.save(missionInsight);
 
         return new ResponseEntity<>(missionRepository.save(mission1), HttpStatus.ACCEPTED);
 

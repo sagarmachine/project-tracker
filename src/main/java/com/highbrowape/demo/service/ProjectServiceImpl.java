@@ -88,7 +88,7 @@ public class ProjectServiceImpl implements IProjectService {
                     MemberInsight memberInsight= new MemberInsight();
                     memberInsight.setMember(member1);
                     member1.setMemberInsight(memberInsight);
-                    project.addUserProjectObjectiveInsight(memberInsight);
+                  //  project.addUserProjectObjectiveInsight(memberInsight);
 
                     userRepository.save(user1);
                     memberRepository.save(member1);
@@ -434,7 +434,7 @@ public class ProjectServiceImpl implements IProjectService {
                 MemberInsight memberInsight= new MemberInsight();
                 memberInsight.setMember(member);
                 member.setMemberInsight(memberInsight);
-                project.addUserProjectObjectiveInsight(memberInsight);
+               // project.addUserProjectObjectiveInsight(memberInsight);
 
                 project.addMember(member);
                 memberRepository.save(member);

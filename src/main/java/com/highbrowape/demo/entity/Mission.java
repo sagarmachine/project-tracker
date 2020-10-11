@@ -103,14 +103,14 @@ public class Mission implements Serializable {
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
     List<Conversation> conversations= new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade =CascadeType.REMOVE)
-    Set<MissionMemberInsight> missionMemberInsights= new HashSet<>();
-
-
-    public void addMissionMemberInsight(MissionMemberInsight missionMemberInsight){
-        missionMemberInsights.add(missionMemberInsight);
-        missionMemberInsight.setMission(this);
-    }
+//    @OneToMany(mappedBy = "mission",cascade =CascadeType.REMOVE)
+//    Set<MissionMemberInsight> missionMemberInsights= new HashSet<>();
+//
+//
+//    public void addMissionMemberInsight(MissionMemberInsight missionMemberInsight){
+//        missionMemberInsights.add(missionMemberInsight);
+//        missionMemberInsight.setMission(this);
+//    }
 
     public void addMissionMember(MissionMember missionMember){
         missionMembers.add(missionMember);

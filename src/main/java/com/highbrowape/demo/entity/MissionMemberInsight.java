@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,10 +20,11 @@ public class MissionMemberInsight {
     int completedObjectiveCount;
 
     @OneToOne(mappedBy = "missionMemberInsight")
+    @JsonIgnore
     MissionMember missionMember;
 
-    @ManyToOne
-    @JoinColumn
-    Mission mission;
+//    @ManyToOne
+//    @JoinColumn
+//    Mission mission;
 
 }

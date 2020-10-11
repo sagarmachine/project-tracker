@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,11 +20,12 @@ public class MemberInsight {
     int completedObjectiveCount;
 
     @OneToOne(mappedBy = "memberInsight")
+    @JsonIgnore
     Member member;
 
-    @ManyToOne
-    @JoinColumn
-    Project project;
+//    @ManyToOne
+//    @JoinColumn
+//    Project project;
 
 
 
