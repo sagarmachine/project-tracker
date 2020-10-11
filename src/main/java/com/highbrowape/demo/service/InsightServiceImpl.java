@@ -55,7 +55,7 @@ public class InsightServiceImpl implements IInsightService {
 
           MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
           missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()-1);
-          missionMemberInsightRepository.save(missionMemberInsightRepository);
+          missionMemberInsightRepository.save(missionMemberInsight);
 
 
            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
@@ -102,7 +102,7 @@ public class InsightServiceImpl implements IInsightService {
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
             missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+1);
-            missionMemberInsightRepository.save(missionMemberInsightRepository);
+            missionMemberInsightRepository.save(missionMemberInsight);
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
             MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+1);
@@ -150,7 +150,7 @@ public class InsightServiceImpl implements IInsightService {
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
             missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()+1);
-            missionMemberInsightRepository.save(missionMemberInsightRepository);
+            missionMemberInsightRepository.save(missionMemberInsight);
 
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
@@ -197,7 +197,7 @@ public class InsightServiceImpl implements IInsightService {
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
             missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+1);
-            missionMemberInsightRepository.save(missionMemberInsightRepository);
+            missionMemberInsightRepository.save(missionMemberInsight);
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
             MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+1);

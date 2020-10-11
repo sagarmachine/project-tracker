@@ -307,11 +307,11 @@ public class ProjectServiceImpl implements IProjectService {
             missionDto.setParentId(mission.getMissionParent().getMissionId());
 
             missionDto.setMemberCount(mission.getMissionMembers().size());
-            missionDto.setNoteCount(mission.getNotes().size());
+            missionDto.setNoteCount(mission.getMissionNotes().size());
 //            missionDto.setObjectiveCount(mission.getMissionInsight().getObjectiveCount());
 //            missionDto.setCompletedObjectiveCount(mission.getMissionInsight().getCompletedObjectiveCount());
             missionDto.setMissionInsight(mission.getMissionInsight());
-            missionDto.setLinkCount(mission.getLinks().size());
+            missionDto.setLinkCount(mission.getMissionLinks().size());
             missionDto.setConversationCount(mission.getConversations().size());
             missionDto.setChildren(new ArrayList<>());
 

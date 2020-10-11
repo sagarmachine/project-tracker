@@ -83,7 +83,8 @@ public class Mission implements Serializable {
     Project project;
 
 
-    @OneToMany(mappedBy = "mission")
+
+    @OneToMany(mappedBy = "mission",cascade = CascadeType.ALL)
     List<MissionMember> missionMembers=new ArrayList<>();
 
     @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
