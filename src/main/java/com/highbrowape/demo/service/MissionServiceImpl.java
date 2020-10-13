@@ -294,16 +294,27 @@ public class MissionServiceImpl implements IMissionService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
 
-    if(!missionMemberRepository.findByMissionAndMemberUserEmail(mission,projectMemberDto.getEmail()).isPresent()) {
+    if(!missionMemberRepository.findByMissionMissionIdAndMemberUserEmail(mission.getMissionId(),projectMemberDto.getEmail()).isPresent()) {
+
+        member.addMissionMember(missionMember1);
+        memberRepository.save(member);
 
             missionMember1.setAddedBy(loggedInEmail);
             missionMember1.setMission(mission);
             missionMember1.setMember(member);
+
             mission.addMissionMember(missionMember1);
-             userRepository.save(member.getUser());
-             missionRepository.save(mission);
+            missionRepository.save(mission);
+
+        MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+        missionMemberInsight.setMissionMember(missionMember1);
+        missionMember1.setMissionMemberInsight(missionMemberInsight);
+        missionMemberInsightRepository.save(missionMemberInsight);
 
         }
+    else
+        return new ResponseEntity<>("MEMBER ALREADY PRESENT ", HttpStatus.BAD_REQUEST);
+
 
         return new ResponseEntity<>(missionMemberRepository.save(missionMember1), HttpStatus.ACCEPTED);
     }
@@ -347,13 +358,22 @@ public class MissionServiceImpl implements IMissionService {
 
             if (!missionMemberRepository.findByMissionAndMemberUserEmail(mission, projectMemberDto.getEmail()).isPresent()) {
 
+                member.addMissionMember(missionMember1);
+                memberRepository.save(member);
+
                 missionMember1.setAddedBy(loggedInEmail);
                 missionMember1.setMission(mission);
                 missionMember1.setMember(member);
-                mission.addMissionMember(missionMember1);
-                userRepository.save(member.getUser());
-                missionRepository.save(mission);
                 missionMemberRepository.save(missionMember1);
+
+                mission.addMissionMember(missionMember1);
+                missionRepository.save(mission);
+
+                MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+                missionMemberInsight.setMissionMember(missionMember1);
+                missionMember1.setMissionMemberInsight(missionMemberInsight);
+                missionMemberInsightRepository.save(missionMemberInsight);
+
             }
 
         }
