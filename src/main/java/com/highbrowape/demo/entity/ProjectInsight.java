@@ -22,4 +22,8 @@ public class ProjectInsight {
     @JsonIgnore
     Project project;
 
+    int noteCount;
+
+    int linkCount;
+
 }

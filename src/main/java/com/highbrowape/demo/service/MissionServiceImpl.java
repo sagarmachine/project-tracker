@@ -102,6 +102,7 @@ public class MissionServiceImpl implements IMissionService {
                 noteRepository.save(note1);
 
             }
+            insightService.noteAddedUpdate(mission.getMissionId(),loggedInEmail,missionAddDto.getNotes().size());
         }
 
         if(missionAddDto.getLinks()!=null) {
@@ -112,6 +113,7 @@ public class MissionServiceImpl implements IMissionService {
                 mission.addLink(link1);
                 linkRepository.save(link1);
             }
+            insightService.linkAddedUpdate(mission.getMissionId(),loggedInEmail,missionAddDto.getLinks().size());
         }
 
 
@@ -207,6 +209,8 @@ public class MissionServiceImpl implements IMissionService {
                 noteRepository.save(note1);
 
             }
+            insightService.noteAddedUpdate(mission.getMissionId(),loggedInEmail,missionAddDto.getNotes().size());
+
         }
         if(missionAddDto.getLinks()!=null) {
             for (LinkDto link : missionAddDto.getLinks()) {
@@ -216,6 +220,8 @@ public class MissionServiceImpl implements IMissionService {
                 mission1.addLink(link1);
                 linkRepository.save(link1);
             }
+            insightService.linkAddedUpdate(mission.getMissionId(),loggedInEmail,missionAddDto.getLinks().size());
+
         }
         if(missionAddDto.getMember()!=null) {
             for (ProjectMemberDto pmd : missionAddDto.getMember()) {
@@ -375,6 +381,7 @@ public class MissionServiceImpl implements IMissionService {
         }
 
 
+
         return new ResponseEntity<>(noteRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
     }
 
@@ -407,6 +414,7 @@ public class MissionServiceImpl implements IMissionService {
         mission.addNote(note1);
         noteRepository.save(note1);
 
+        insightService.noteAddedUpdate(mission.getMissionId(),loggedInEmail,1);
 
         return new ResponseEntity<>(missionRepository.save(mission),HttpStatus.ACCEPTED);
 
@@ -473,6 +481,9 @@ public class MissionServiceImpl implements IMissionService {
             throw new ProjectNoteNotFoundException("No note found with id  " + id);
         }
 
+        insightService.noteRemovedUpdate(mission.getMissionId(),loggedInEmail,1);
+
+
         return new ResponseEntity<>("MISSION NOTE DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
 
@@ -534,6 +545,9 @@ public class MissionServiceImpl implements IMissionService {
         linkRepository.save(link1);
 
 
+        insightService.linkAddedUpdate(mission.getMissionId(),loggedInEmail,1);
+
+
         return new ResponseEntity<>(missionRepository.save(mission),HttpStatus.ACCEPTED);
 
     }
@@ -564,6 +578,8 @@ public class MissionServiceImpl implements IMissionService {
         link1.setId(link.getId());
         link1.setMission(mission);
         link1.setUpdatedOn(new java.util.Date());
+
+
 
         return new ResponseEntity<>(linkRepository.save(link1),HttpStatus.ACCEPTED);
 
@@ -597,6 +613,8 @@ public class MissionServiceImpl implements IMissionService {
         }catch(Exception ex) {
             throw new ProjectNoteNotFoundException("No link found with id  " + id);
         }
+
+        insightService.linkRemovedUpdate(mission.getMissionId(),loggedInEmail,1);
 
         return new ResponseEntity<>("MISSION LINK DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
@@ -658,6 +676,9 @@ public class MissionServiceImpl implements IMissionService {
         objective.setAddedOn(new java.util.Date());
         mission.addObjective(objective);
         missionRepository.save(mission);
+
+
+        insightService.objectiveAddedUpdate(mission.getMissionId(),loggedInEmail,1);
 
 
         return new ResponseEntity<>(objectiveRepository.save(objective),HttpStatus.ACCEPTED);
@@ -722,6 +743,9 @@ public class MissionServiceImpl implements IMissionService {
         }catch(Exception ex) {
             throw new ObjectiveNotFoundException("No objective found with id  " + id);
         }
+
+        insightService.objectiveRemovedUpdate(mission.getMissionId(),loggedInEmail,1);
+
 
         return new ResponseEntity<>("MISSION LINK DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 

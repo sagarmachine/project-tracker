@@ -23,8 +23,8 @@ public class MissionMemberInsight {
     @JsonIgnore
     MissionMember missionMember;
 
-//    @ManyToOne
-//    @JoinColumn
-//    Mission mission;
+    int noteCount;
+
+    int linkCount;
 
 }

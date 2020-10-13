@@ -46,11 +46,11 @@ public class MissionDto {
 
     List<String> childIds;
 
-    int memberCount;
+   int memberCount;
 
-    int linkCount;
-
-    int noteCount;
+//    int linkCount;
+//
+//    int noteCount;
 
 //    int objectiveCount;
 //    int completedObjectiveCount;

@@ -30,14 +30,14 @@ public class InsightServiceImpl implements IInsightService {
 
 
     @Override
-    public void objectiveNonCompletionUpdate(String missionId, String loggedInEmail) {
+    public void objectiveNonCompletionUpdate(String missionId, String loggedInEmail, int n) {
 
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
        Mission parent= mission.getMissionParent();
 
        while(parent!=null){
-           parent.getMissionInsight().setCompletedObjectiveCount(parent.getMissionInsight().getCompletedObjectiveCount()-1);
+           parent.getMissionInsight().setCompletedObjectiveCount(parent.getMissionInsight().getCompletedObjectiveCount()-n);
            missionRepository.save(mission);
            parent=parent.getMissionParent();
        }
@@ -50,16 +50,16 @@ public class InsightServiceImpl implements IInsightService {
 
            User user = missionsMember.getMember().getUser();
 
-           user.getUserInsights().setCompletedObjectiveCount(user.getUserInsights().getCompletedObjectiveCount()+1);
+           user.getUserInsights().setCompletedObjectiveCount(user.getUserInsights().getCompletedObjectiveCount()+n);
            userRepository.save(user);
 
           MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
-          missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()-1);
+          missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()-n);
           missionMemberInsightRepository.save(missionMemberInsight);
 
 
            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
-           MemberInsight.setCompletedObjectiveCount(MemberInsight.getCompletedObjectiveCount()+1);
+           MemberInsight.setCompletedObjectiveCount(MemberInsight.getCompletedObjectiveCount()+n);
            memberInsightRepository.save(MemberInsight);
 
        }
@@ -69,7 +69,7 @@ public class InsightServiceImpl implements IInsightService {
 
         Project project=mission.getProject();
 
-       project.getProjectInsight().setCompletedObjectiveCount(project.getProjectInsight().getCompletedObjectiveCount()+1);
+       project.getProjectInsight().setCompletedObjectiveCount(project.getProjectInsight().getCompletedObjectiveCount()+n);
 
        //Member member = project.get
 
@@ -78,13 +78,13 @@ public class InsightServiceImpl implements IInsightService {
     }
 
     @Override
-    public void objectiveRemovedUpdate(String missionId, String loggedInEmail) {
+    public void objectiveRemovedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
         Mission parent= mission.getMissionParent();
 
         while(parent!=null){
-            parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+1);
+            parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+n);
             missionRepository.save(mission);
             parent=parent.getMissionParent();
         }
@@ -96,16 +96,16 @@ public class InsightServiceImpl implements IInsightService {
 
             User user = missionsMember.getMember().getUser();
 
-            user.getUserInsights().setObjectiveCount(user.getUserInsights().getObjectiveCount()+1);
+            user.getUserInsights().setObjectiveCount(user.getUserInsights().getObjectiveCount()+n);
             userRepository.save(user);
 
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
-            missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+1);
+            missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+n);
             missionMemberInsightRepository.save(missionMemberInsight);
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
-            MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+1);
+            MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+n);
              memberInsightRepository.save(MemberInsight);
 
 
@@ -113,7 +113,7 @@ public class InsightServiceImpl implements IInsightService {
 
         Project project=mission.getProject();
 
-        project.getProjectInsight().setObjectiveCount(project.getProjectInsight().getObjectiveCount()+1);
+        project.getProjectInsight().setObjectiveCount(project.getProjectInsight().getObjectiveCount()+n);
 
         projectRepository.save(project);
 
@@ -125,14 +125,14 @@ public class InsightServiceImpl implements IInsightService {
 
 
     @Override
-    public void objectiveCompletionUpdate(String missionId, String loggedInEmail) {
+    public void objectiveCompletionUpdate(String missionId, String loggedInEmail, int n) {
 
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
         Mission parent= mission.getMissionParent();
 
         while(parent!=null){
-            parent.getMissionInsight().setCompletedObjectiveCount(parent.getMissionInsight().getCompletedObjectiveCount()+1);
+            parent.getMissionInsight().setCompletedObjectiveCount(parent.getMissionInsight().getCompletedObjectiveCount()+n);
             missionRepository.save(mission);
             parent=parent.getMissionParent();
         }
@@ -145,16 +145,16 @@ public class InsightServiceImpl implements IInsightService {
 
             User user = missionsMember.getMember().getUser();
 
-            user.getUserInsights().setCompletedObjectiveCount(user.getUserInsights().getCompletedObjectiveCount()+1);
+            user.getUserInsights().setCompletedObjectiveCount(user.getUserInsights().getCompletedObjectiveCount()+n);
             userRepository.save(user);
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
-            missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()+1);
+            missionMemberInsight.setCompletedObjectiveCount(missionsMember.getMissionMemberInsight().getCompletedObjectiveCount()+n);
             missionMemberInsightRepository.save(missionMemberInsight);
 
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
-            MemberInsight.setCompletedObjectiveCount(MemberInsight.getCompletedObjectiveCount()+1);
+            MemberInsight.setCompletedObjectiveCount(MemberInsight.getCompletedObjectiveCount()+n);
             memberInsightRepository.save(MemberInsight);
 
         }
@@ -164,7 +164,7 @@ public class InsightServiceImpl implements IInsightService {
 
         Project project=mission.getProject();
 
-        project.getProjectInsight().setCompletedObjectiveCount(project.getProjectInsight().getCompletedObjectiveCount()+1);
+        project.getProjectInsight().setCompletedObjectiveCount(project.getProjectInsight().getCompletedObjectiveCount()+n);
 
         //Member member = project.get
 
@@ -173,13 +173,13 @@ public class InsightServiceImpl implements IInsightService {
     }
 
     @Override
-    public void objectiveAddedUpdate(String missionId, String loggedInEmail) {
+    public void objectiveAddedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
         Mission parent= mission.getMissionParent();
 
         while(parent!=null){
-            parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+1);
+            parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+n);
             missionRepository.save(mission);
             parent=parent.getMissionParent();
         }
@@ -191,16 +191,16 @@ public class InsightServiceImpl implements IInsightService {
 
             User user = missionsMember.getMember().getUser();
 
-            user.getUserInsights().setObjectiveCount(user.getUserInsights().getObjectiveCount()+1);
+            user.getUserInsights().setObjectiveCount(user.getUserInsights().getObjectiveCount()+n);
             userRepository.save(user);
 
 
             MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
-            missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+1);
+            missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+n);
             missionMemberInsightRepository.save(missionMemberInsight);
 
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
-            MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+1);
+            MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+n);
             memberInsightRepository.save(MemberInsight);
 
 
@@ -208,13 +208,194 @@ public class InsightServiceImpl implements IInsightService {
 
         Project project=mission.getProject();
 
-        project.getProjectInsight().setObjectiveCount(project.getProjectInsight().getObjectiveCount()+1);
+        project.getProjectInsight().setObjectiveCount(project.getProjectInsight().getObjectiveCount()+n);
+
+        projectRepository.save(project);
+
+    }
+
+
+
+
+
+    @Override
+    public void linkAddedUpdate(String missionId, String loggedInEmail, int n) {
+        Mission mission=missionRepository.findByMissionId(missionId).get();
+
+        Mission parent= mission.getMissionParent();
+
+        while(parent!=null){
+            parent.getMissionInsight().setLinkCount(parent.getMissionInsight().getLinkCount()+n);
+            missionRepository.save(mission);
+            parent=parent.getMissionParent();
+        }
+
+
+        List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+        for (MissionMember missionsMember :missionsMembers){
+
+            User user = missionsMember.getMember().getUser();
+
+            user.getUserInsights().setLinkCount(user.getUserInsights().getLinkCount()+n);
+            userRepository.save(user);
+
+
+            MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
+            missionMemberInsight.setLinkCount(missionsMember.getMissionMemberInsight().getLinkCount()+n);
+            missionMemberInsightRepository.save(missionMemberInsight);
+
+            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
+            MemberInsight.setLinkCount(MemberInsight.getLinkCount()+n);
+            memberInsightRepository.save(MemberInsight);
+
+
+        }
+
+        Project project=mission.getProject();
+
+        project.getProjectInsight().setLinkCount(project.getProjectInsight().getLinkCount()+n);
 
         projectRepository.save(project);
 
 
 
     }
+
+
+    @Override
+    public void linkRemovedUpdate(String missionId, String loggedInEmail, int n) {
+        Mission mission=missionRepository.findByMissionId(missionId).get();
+
+        Mission parent= mission.getMissionParent();
+
+        while(parent!=null){
+            parent.getMissionInsight().setLinkCount(parent.getMissionInsight().getLinkCount()-n);
+            missionRepository.save(mission);
+            parent=parent.getMissionParent();
+        }
+
+
+        List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+        for (MissionMember missionsMember :missionsMembers){
+
+            User user = missionsMember.getMember().getUser();
+
+            user.getUserInsights().setLinkCount(user.getUserInsights().getLinkCount()-n);
+            userRepository.save(user);
+
+
+            MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
+            missionMemberInsight.setLinkCount(missionsMember.getMissionMemberInsight().getLinkCount()-n);
+            missionMemberInsightRepository.save(missionMemberInsight);
+
+            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
+            MemberInsight.setLinkCount(MemberInsight.getLinkCount()-n);
+            memberInsightRepository.save(MemberInsight);
+       }
+
+        Project project=mission.getProject();
+
+        project.getProjectInsight().setLinkCount(project.getProjectInsight().getLinkCount()-n);
+
+        projectRepository.save(project);
+
+
+
+    }
+
+
+    @Override
+    public void noteAddedUpdate(String missionId, String loggedInEmail, int n) {
+        Mission mission=missionRepository.findByMissionId(missionId).get();
+
+        Mission parent= mission.getMissionParent();
+
+        while(parent!=null){
+            parent.getMissionInsight().setNoteCount(parent.getMissionInsight().getNoteCount()+n);
+            missionRepository.save(mission);
+            parent=parent.getMissionParent();
+        }
+
+
+        List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+        for (MissionMember missionsMember :missionsMembers){
+
+            User user = missionsMember.getMember().getUser();
+
+            user.getUserInsights().setNoteCount(user.getUserInsights().getNoteCount()+n);
+            userRepository.save(user);
+
+
+            MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
+            missionMemberInsight.setNoteCount(missionsMember.getMissionMemberInsight().getNoteCount()+n);
+            missionMemberInsightRepository.save(missionMemberInsight);
+
+            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
+            MemberInsight.setNoteCount(MemberInsight.getNoteCount()+n);
+            memberInsightRepository.save(MemberInsight);
+
+
+        }
+
+        Project project=mission.getProject();
+
+        project.getProjectInsight().setNoteCount(project.getProjectInsight().getNoteCount()+n);
+
+        projectRepository.save(project);
+
+
+
+    }
+
+
+    @Override
+    public void noteRemovedUpdate(String missionId, String loggedInEmail, int n) {
+        Mission mission=missionRepository.findByMissionId(missionId).get();
+
+        Mission parent= mission.getMissionParent();
+
+        while(parent!=null){
+            parent.getMissionInsight().setNoteCount(parent.getMissionInsight().getNoteCount()-n);
+            missionRepository.save(mission);
+            parent=parent.getMissionParent();
+        }
+
+
+        List<MissionMember> missionsMembers=new ArrayList(mission.getMissionMembers());
+
+        for (MissionMember missionsMember :missionsMembers){
+
+            User user = missionsMember.getMember().getUser();
+
+            user.getUserInsights().setNoteCount(user.getUserInsights().getNoteCount()-n);
+            userRepository.save(user);
+
+
+            MissionMemberInsight missionMemberInsight= missionsMember.getMissionMemberInsight();
+            missionMemberInsight.setNoteCount(missionsMember.getMissionMemberInsight().getNoteCount()-n);
+            missionMemberInsightRepository.save(missionMemberInsight);
+
+            MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
+            MemberInsight.setNoteCount(MemberInsight.getNoteCount()-n);
+            memberInsightRepository.save(MemberInsight);
+
+
+        }
+
+        Project project=mission.getProject();
+
+        project.getProjectInsight().setNoteCount(project.getProjectInsight().getNoteCount()-n);
+
+        projectRepository.save(project);
+
+
+
+    }
+
+
 
     @Override
     public void userActionUpdate(String loggedInEmail, String comment) {

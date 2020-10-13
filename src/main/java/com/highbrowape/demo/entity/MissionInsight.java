@@ -22,4 +22,8 @@ public class MissionInsight implements Serializable {
     @OneToOne(mappedBy = "missionInsight", cascade = CascadeType.ALL)
     @JsonIgnore
     Mission mission;
+
+    int noteCount;
+
+    int linkCount;
 }

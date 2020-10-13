@@ -23,10 +23,9 @@ public class MemberInsight {
     @JsonIgnore
     Member member;
 
-//    @ManyToOne
-//    @JoinColumn
-//    Project project;
+    int noteCount;
 
+    int linkCount;
 
 
 

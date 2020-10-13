@@ -23,6 +23,10 @@ public class UserInsights {
    @JsonIgnore
     User user ;
 
+    int noteCount;
+
+    int linkCount;
+
 
 
 }
