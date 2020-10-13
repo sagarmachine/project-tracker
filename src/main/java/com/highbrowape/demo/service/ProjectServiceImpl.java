@@ -27,6 +27,9 @@ public class ProjectServiceImpl implements IProjectService {
     UserRepository userRepository;
 
     @Autowired
+    ProjectInsightRepository projectInsightRepository;
+
+    @Autowired
     ProjectRepository projectRepository;
 
     @Autowired
@@ -126,6 +129,7 @@ public class ProjectServiceImpl implements IProjectService {
         projectInsight.setProject(project);
         project.setProjectInsight(projectInsight);
 
+           projectInsightRepository.save(projectInsight);
         return new ResponseEntity<>(projectRepository.save(project), HttpStatus.ACCEPTED);
     }
 
@@ -269,7 +273,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
-        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
+        if(projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
 
         if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
 
@@ -365,11 +369,15 @@ public class ProjectServiceImpl implements IProjectService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
         Pageable pageable = PageRequest.of(pageNumber, 5);
+        User user= userRepository.findByEmail(loggedInEmail).get();
+
+        ArrayList<Project> projects= new ArrayList<>(user.getProjects());
+
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
-        for(Member m:members){
-            Project p=m.getProject();
+        for(Project p:projects){
+          //  Project p=m.getProject();
             ProjectListDto project= mapper.map(p, ProjectListDto.class);
             long totalMembers=(long)memberRepository.countByProject(p);
             project.setTotalMembers(totalMembers);
