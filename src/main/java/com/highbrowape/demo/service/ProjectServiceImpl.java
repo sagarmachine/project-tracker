@@ -368,16 +368,13 @@ public class ProjectServiceImpl implements IProjectService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
-        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Pageable pageable = PageRequest.of(pageNumber, 10);
         User user= userRepository.findByEmail(loggedInEmail).get();
-
-        ArrayList<Project> projects= new ArrayList<>(user.getProjects());
-
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
-        for(Project p:projects){
-          //  Project p=m.getProject();
+        for(Member m:members){
+            Project p=m.getProject();
             ProjectListDto project= mapper.map(p, ProjectListDto.class);
             long totalMembers=(long)memberRepository.countByProject(p);
             project.setTotalMembers(totalMembers);

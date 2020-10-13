@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class UserInsights {
     int completedObjectiveCount;
 
     @OneToOne(mappedBy = "userInsights")
+   @JsonIgnore
     User user ;
 
 
