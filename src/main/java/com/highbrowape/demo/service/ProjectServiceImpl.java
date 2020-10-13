@@ -273,7 +273,7 @@ public class ProjectServiceImpl implements IProjectService {
         if(!isValidUser(loggedInEmail)) throw  new UserNotFoundException(loggedInEmail+" is not a valid user ");
         Optional<Project> projectOptional=projectRepository.findByProjectId(projectId);
 
-        if(projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
+        if(!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  "+projectId);
 
         if(!isValidMember(projectId,loggedInEmail)) throw new InvalidAuthorityException(loggedInEmail+ " is not member of the project with id "+projectId);
 
