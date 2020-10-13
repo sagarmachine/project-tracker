@@ -87,8 +87,8 @@ public class UserServiceImpl implements IUserService {
         httpHeaders.add("Authorization","Bearer "+jwt);
         httpHeaders.add("Name",user.getFirstName()+" "+user.getLastName());
         httpHeaders.add("Email",user.getEmail());
-        httpHeaders.add("imageUrl",user.getImageUrl());
-        httpHeaders.add("thumbnailUrl",user.getThumbnailUrl());
+        httpHeaders.add("ImageUrl",user.getImageUrl());
+        httpHeaders.add("ThumbnailUrl",user.getThumbnailUrl());
 
 
         return new ResponseEntity<>(user,httpHeaders,HttpStatus.OK);
@@ -109,8 +109,13 @@ public class UserServiceImpl implements IUserService {
             httpHeaders.add("Authorization","Bearer "+jwt);
             httpHeaders.add("Name",userOptional.get().getFirstName()+" "+userOptional.get().getLastName());
             httpHeaders.add("Email",token.getName());
-            httpHeaders.add("imageUrl",userOptional.get().getImageUrl());
-            httpHeaders.add("thumbnailUrl",userOptional.get().getThumbnailUrl());
+            httpHeaders.add("ImageUrl",userOptional.get().getImageUrl());
+            httpHeaders.add("ThumbnailUrl",userOptional.get().getThumbnailUrl());
+
+           if(userOptional.get().getUserInsights()!=null) {
+                httpHeaders.add("ObjectivesCompleted", userOptional.get().getUserInsights().getCompletedObjectiveCount() + "");
+                httpHeaders.add("TotalObjectives", userOptional.get().getUserInsights().getObjectiveCount() + "");
+            }
 
             return new ResponseEntity<>(httpHeaders,HttpStatus.OK);
 

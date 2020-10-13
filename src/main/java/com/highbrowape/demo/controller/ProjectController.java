@@ -69,8 +69,8 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/member")
-    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
-        return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
+    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
+        return projectService.addMemberToProject(id,projectMemberDtoList,principal.getName());
     }
     @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToProject(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){

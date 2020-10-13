@@ -27,6 +27,9 @@ public class ProjectServiceImpl implements IProjectService {
     UserRepository userRepository;
 
     @Autowired
+    ProjectInsightRepository projectInsightRepository;
+
+    @Autowired
     ProjectRepository projectRepository;
 
     @Autowired
@@ -126,6 +129,7 @@ public class ProjectServiceImpl implements IProjectService {
         projectInsight.setProject(project);
         project.setProjectInsight(projectInsight);
 
+           projectInsightRepository.save(projectInsight);
         return new ResponseEntity<>(projectRepository.save(project), HttpStatus.ACCEPTED);
     }
 
@@ -364,7 +368,8 @@ public class ProjectServiceImpl implements IProjectService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         double totalPages=Math.ceil(memberRepository.countByUserEmail(loggedInEmail)/2);
-        Pageable pageable = PageRequest.of(pageNumber, 5);
+        Pageable pageable = PageRequest.of(pageNumber, 10);
+        User user= userRepository.findByEmail(loggedInEmail).get();
         List<Member> members= memberRepository.findByUserEmail(loggedInEmail,pageable);
         List<ProjectListDto> projectList=new ArrayList<>();
 
@@ -405,7 +410,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);

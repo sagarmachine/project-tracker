@@ -21,7 +21,7 @@ public class MvcConfiguration implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         log.info("MVC CONFIG");
-        registry.addMapping("/**").allowedMethods("*").exposedHeaders("Authorization","Email").allowedOrigins("*");
+        registry.addMapping("/**").allowedMethods("*").exposedHeaders("Authorization","Email","Name","ImageUrl","ThumbnailUrl","ObjectivesCompleted","TotalObjectives").allowedOrigins("*");
     }
 
 //    @Bean

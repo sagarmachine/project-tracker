@@ -1,6 +1,7 @@
 package com.highbrowape.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -22,6 +23,7 @@ public class UserAction {
 
     @ManyToOne
     @JoinColumn
+     @JsonIgnore
     User user;
 
 

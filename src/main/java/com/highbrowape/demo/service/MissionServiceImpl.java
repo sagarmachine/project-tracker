@@ -77,7 +77,7 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission= mapper.map(missionAddDto,Mission.class);
 
         long totalMissions=countMissions(project,1,null);
-        mission.setMissionId(totalMissions+1+"");
+        mission.setMissionId(project.getProjectId()+(totalMissions+1)+"");
         mission.setLevel(1);
         mission.setProject(project);
         mission.setAddedBy(loggedInEmail);
