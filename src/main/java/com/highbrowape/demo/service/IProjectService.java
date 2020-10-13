@@ -8,8 +8,10 @@ import com.highbrowape.demo.entity.Project;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
- public interface IProjectService {
+
+public interface IProjectService {
 
     ResponseEntity<?> addProject(ProjectAdd projectAdd, String loggedInEmail);
 
@@ -29,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
     //project DB id
     ResponseEntity<?>  getProjectMembers(String id, String loggedInEmail);
 
-     ResponseEntity<?>  addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail);
+     ResponseEntity<?>  addMemberToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail);
     //member DB id
      ResponseEntity<?>  updateMemberAuthorityToProject(Long id, @PathVariable("authority") Authority authority, String loggedInEmail);
      //member DB id

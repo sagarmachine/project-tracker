@@ -410,7 +410,7 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
         if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
