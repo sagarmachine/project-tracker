@@ -120,9 +120,9 @@ public class MissionController {
     }
 
     @PutMapping("/objective/{id}/status/{value}")
-    public void updateObjectiveStatus(@PathVariable("id")Long id, @PathVariable("value")Status value,Principal principal){
+    public ResponseEntity<?>  updateObjectiveStatus(@PathVariable("id")Long id, @PathVariable("value")Status value,Principal principal){
 
-        missionService.updateObjectiveStatus(id,value,principal.getName());
+        return missionService.updateObjectiveStatus(id,value,principal.getName());
     }
 
 

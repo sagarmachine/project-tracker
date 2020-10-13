@@ -728,7 +728,31 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public void updateObjectiveStatus(Long id, Status status, String loggedInEmail) {
+    public ResponseEntity<?> updateObjectiveStatus(Long id, Status status, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Objective> objectiveOptional=objectiveRepository.findById(id);
+        if(!objectiveOptional.isPresent()) throw new ObjectiveNotFoundException("No objective found with  id  "+ id);
+
+        Objective objective=objectiveOptional.get();
+
+        Mission mission=objective.getMission();
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+objective.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
+
+
+        objective.setStatus(status);
+        objective.setUpdatedOn(new java.util.Date());
+
+        return new ResponseEntity<>(objectiveRepository.save(objective),HttpStatus.ACCEPTED);
+
 
     }
 

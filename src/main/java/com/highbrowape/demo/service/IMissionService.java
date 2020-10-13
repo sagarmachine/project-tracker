@@ -32,5 +32,5 @@ public interface IMissionService {
     ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String name);
     ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name);
     ResponseEntity<?> removeObjectiveFromMission(Long id, String name);
-    void updateObjectiveStatus(Long id, Status status,String loggedInEmail );
+    ResponseEntity<?>  updateObjectiveStatus(Long id, Status status,String loggedInEmail );
 }
