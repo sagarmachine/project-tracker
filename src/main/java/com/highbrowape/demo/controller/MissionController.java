@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/mission")
@@ -45,6 +46,12 @@ public class MissionController {
     public ResponseEntity<?>  addMemberToMission(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return missionService.addMemberToMission(projectMemberDto,id,principal.getName());
     }
+
+    @PostMapping("/{id}/members")
+    public ResponseEntity<?>  addMembersToMission(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
+        return missionService.addMembersToMission(projectMemberDtoList,id,principal.getName());
+    }
+
     @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToMission(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){
         return missionService.updateMemberAuthorityOfMission(authority,id,principal.getName());

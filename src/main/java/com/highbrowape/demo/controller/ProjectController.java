@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/project")
@@ -69,8 +70,13 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/member")
-    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
-        return projectService.addMemberToProject(id,projectMemberDtoList,principal.getName());
+    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
+        return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
+    }
+
+    @PostMapping("/{id}/members")
+    public ResponseEntity<?>  addMembersToProject(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
+        return projectService.addMembersToProject(id,projectMemberDtoList,principal.getName());
     }
     @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToProject(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){

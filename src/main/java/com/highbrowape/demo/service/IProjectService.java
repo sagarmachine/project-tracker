@@ -31,7 +31,10 @@ public interface IProjectService {
     //project DB id
     ResponseEntity<?>  getProjectMembers(String id, String loggedInEmail);
 
-     ResponseEntity<?>  addMemberToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail);
+
+    ResponseEntity<?>  addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail);
+
+     ResponseEntity<?>  addMembersToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail);
     //member DB id
      ResponseEntity<?>  updateMemberAuthorityToProject(Long id, @PathVariable("authority") Authority authority, String loggedInEmail);
      //member DB id

@@ -410,15 +410,40 @@ public class ProjectServiceImpl implements IProjectService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail) {
+    public ResponseEntity<?> addMemberToProject(String id, ProjectMemberDto projectMemberDto, String loggedInEmail) {
         if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
-        if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
+
         Optional<Project> projectOptional = projectRepository.findByProjectId(id);
-
-
         if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  " + id);
-
         Project project = projectOptional.get();
+
+        Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
+        if (!optionalMember.isPresent())
+            throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+
+        if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
+        {
+
+                addMember(project,projectMemberDto,loggedInEmail);
+        }
+
+        else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
+
+        insightService.userActionUpdate(loggedInEmail,"Members Added to "+project.getProjectName());
+
+        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+
+    }
+
+    @Override
+    public ResponseEntity<?> addMembersToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail) {
+        if (!isValidUser(loggedInEmail)) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project found with project id  " + id);
+        Project project = projectOptional.get();
+
         Optional<Member> optionalMember = memberRepository.findByProjectAndUserEmail(project, loggedInEmail);
         if (!optionalMember.isPresent())
             throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
@@ -426,26 +451,10 @@ public class ProjectServiceImpl implements IProjectService {
 
         if (optionalMember.get().getAuthority() == Authority.CREATOR || optionalMember.get().getAuthority() == Authority.CHIEF)
             {
-                ModelMapper mapper = new ModelMapper();
-                mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-            Optional<Member> optionalMember2 = memberRepository.findByProjectAndUserEmail(project, projectMemberDto.getEmail());
-            if (!optionalMember2.isPresent()) {
-                Member member = mapper.map(projectMemberDto, Member.class);
-                member.setAddedBy(loggedInEmail);
-                member.setAddedOn(new java.util.Date());
-                member.setProject(project);
-                member.setUser(userRepository.findByEmail(projectMemberDto.getEmail()).get());
-
-                MemberInsight memberInsight= new MemberInsight();
-                memberInsight.setMember(member);
-                member.setMemberInsight(memberInsight);
-               // project.addUserProjectObjectiveInsight(memberInsight);
-
-                project.addMember(member);
-                memberRepository.save(member);
-
-            }
-
+                for(ProjectMemberDto projectMemberDto:projectMemberDtoList)
+                {
+                    addMember(project,projectMemberDto,loggedInEmail);
+                }
             }
 
         else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
@@ -453,6 +462,32 @@ public class ProjectServiceImpl implements IProjectService {
         insightService.userActionUpdate(loggedInEmail,"Members Added to "+project.getProjectName());
 
         return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+    }
+
+
+    private void addMember(Project project,ProjectMemberDto projectMemberDto,String loggedInEmail){
+        if(!isValidUser(projectMemberDto.getEmail())) throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Optional<Member> optionalMember2 = memberRepository.findByProjectAndUserEmail(project, projectMemberDto.getEmail());
+        if (!optionalMember2.isPresent()) {
+            Member member = mapper.map(projectMemberDto, Member.class);
+            member.setAddedBy(loggedInEmail);
+            member.setAddedOn(new java.util.Date());
+            member.setProject(project);
+            member.setUser(userRepository.findByEmail(projectMemberDto.getEmail()).get());
+
+            MemberInsight memberInsight= new MemberInsight();
+            memberInsight.setMember(member);
+            member.setMemberInsight(memberInsight);
+            // project.addUserProjectObjectiveInsight(memberInsight);
+
+            project.addMember(member);
+            memberRepository.save(member);
+
+        }
+
+
     }
     @Override
     public ResponseEntity<?> updateMemberAuthorityToProject(Long id, Authority authority, String loggedInEmail) {
