@@ -2,6 +2,7 @@ package com.highbrowape.demo.controller;
 
 
 import com.highbrowape.demo.dto.input.*;
+import com.highbrowape.demo.dto.output.ProjectDetailDto;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Project;
 import com.highbrowape.demo.repository.ProjectRepository;
@@ -58,7 +59,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}/detail")
-    public  ResponseEntity<Project> getProjectDetailView(@PathVariable("id")String id, Principal principal){
+    public  ResponseEntity<ProjectDetailDto> getProjectDetailView(@PathVariable("id")String id, Principal principal){
         return projectService.getProjectDetail(id,principal.getName());
     }
 
@@ -70,7 +71,13 @@ public class ProjectController {
     }
 
     @PostMapping("/{id}/member")
-    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
+
+    public ResponseEntity<?>  addMemberToProject(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
+        return projectService.addMemberToProject(id,projectMemberDto,principal.getName());
+    }
+
+    @PostMapping("/{id}/members")
+    public ResponseEntity<?>  addMembersToProject(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
         return projectService.addMembersToProject(id,projectMemberDtoList,principal.getName());
     }
     @PutMapping("/member/{id}/authority/{authority}")

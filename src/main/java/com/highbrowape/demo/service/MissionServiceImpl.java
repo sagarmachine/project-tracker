@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -77,7 +78,7 @@ public class MissionServiceImpl implements IMissionService {
         Mission mission= mapper.map(missionAddDto,Mission.class);
 
         long totalMissions=countMissions(project,1,null);
-        mission.setMissionId(project.getProjectId()+(totalMissions+1)+"");
+        mission.setMissionId(project.getProjectId()+"-"+(totalMissions+1)+"");
         mission.setLevel(1);
         mission.setProject(project);
         mission.setAddedBy(loggedInEmail);
@@ -122,7 +123,7 @@ public class MissionServiceImpl implements IMissionService {
                 HashMap<String,Object> userMap1= isValidProjectMember(project,pmd.getEmail());
 
                 if((boolean)userMap1.get("isValid"))  {
-                    User user1= (User)userMap.get("user");
+                    User user1= (User)userMap1.get("user");
                     Optional<MissionMember> optionalMissionMember = missionMemberRepository.findByMissionMissionIdAndMemberUserEmail(mission.getMissionId(), pmd.getEmail());
                     if (optionalMissionMember.isPresent()) continue;
                     MissionMember missionMember = mapper.map(pmd, MissionMember.class);
@@ -139,7 +140,7 @@ public class MissionServiceImpl implements IMissionService {
                  //   mission.addMissionMemberInsight(missionMemberInsight);
 
 
-                    memberRepository.save(member);
+//                    memberRepository.save(member);
                 }
             }
         }
@@ -245,7 +246,7 @@ public class MissionServiceImpl implements IMissionService {
                     missionMember.setMissionMemberInsight(missionMemberInsight);
                    // mission1.addMissionMemberInsight(missionMemberInsight);
 
-                    memberRepository.save(member);
+//                    memberRepository.save(member);
                 }
             }
         }
@@ -261,7 +262,8 @@ public class MissionServiceImpl implements IMissionService {
 
     @Override
     public ResponseEntity<?> getMissionMembers(String id, String name) {
-        return null;
+       return new ResponseEntity<>(missionMemberRepository.findByMissionMissionId(id),HttpStatus.OK);
+
     }
 
     @Override
@@ -295,25 +297,96 @@ public class MissionServiceImpl implements IMissionService {
                 throw new InvalidAuthorityException(loggedInEmail + "  is not allowed to add member to the mission ");
         }
 
-
-
-
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
 
-    if(!missionMemberRepository.findByMissionAndMemberUserEmail(mission,projectMemberDto.getEmail()).isPresent()) {
+    if(!missionMemberRepository.findByMissionMissionIdAndMemberUserEmail(mission.getMissionId(),projectMemberDto.getEmail()).isPresent()) {
+
+        member.addMissionMember(missionMember1);
+        memberRepository.save(member);
 
             missionMember1.setAddedBy(loggedInEmail);
             missionMember1.setMission(mission);
             missionMember1.setMember(member);
+
             mission.addMissionMember(missionMember1);
-             userRepository.save(member.getUser());
-             missionRepository.save(mission);
+            missionRepository.save(mission);
+
+        MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+        missionMemberInsight.setMissionMember(missionMember1);
+        missionMember1.setMissionMemberInsight(missionMemberInsight);
+        missionMemberInsightRepository.save(missionMemberInsight);
+
+        }
+    else
+        return new ResponseEntity<>("MEMBER ALREADY PRESENT ", HttpStatus.BAD_REQUEST);
+
+
+        return new ResponseEntity<>(missionMemberRepository.save(missionMember1), HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity<?> addMembersToMission(List<ProjectMemberDto> projectMemberDtoList, String id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+
+        HashMap<String, Object> missionMap = isValidMission(id);
+        if (!(boolean) missionMap.get("isValid"))
+            throw new MissionNotFoundException(" No Mission found with  mission id :" + id);
+        Mission mission = (Mission) missionMap.get("mission");
+
+
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        HashMap<String, Object> captainOrChiefOrCreatorOfMissionMap=isCaptainOrChiefOrCreatorOfMission(mission, loggedInEmail);
+        if (!(boolean) creatorOrChiefOfProjectMap.get("isValid")) {
+
+            if (!(boolean) captainOrChiefOrCreatorOfMissionMap.get("isValid"))
+                throw new InvalidAuthorityException(loggedInEmail + "  is not allowed to add member to the mission ");
+        }
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        for(ProjectMemberDto projectMemberDto:projectMemberDtoList) {
+
+
+            HashMap<String, Object> userMap1 = isValidUser(projectMemberDto.getEmail());
+            if (!(boolean) userMap1.get("isValid"))
+                throw new UserNotFoundException(projectMemberDto.getEmail() + " is not a valid user ");
+
+
+            HashMap<String, Object> memberMap = isValidProjectMember(mission.getProject(),projectMemberDto.getEmail());
+            if(!(boolean)memberMap.get("isValid")) throw new MemberNotFoundException(projectMemberDto.getEmail()+" is not a member of the project ");
+            Member member=(Member)memberMap.get("member");
+
+            MissionMember missionMember1 = mapper.map(projectMemberDto, MissionMember.class);
+
+            if (!missionMemberRepository.findByMissionAndMemberUserEmail(mission, projectMemberDto.getEmail()).isPresent()) {
+
+                member.addMissionMember(missionMember1);
+                memberRepository.save(member);
+
+                missionMember1.setAddedBy(loggedInEmail);
+                missionMember1.setMission(mission);
+                missionMember1.setMember(member);
+                missionMemberRepository.save(missionMember1);
+
+                mission.addMissionMember(missionMember1);
+                missionRepository.save(mission);
+
+                MissionMemberInsight missionMemberInsight = new MissionMemberInsight();
+                missionMemberInsight.setMissionMember(missionMember1);
+                missionMember1.setMissionMemberInsight(missionMemberInsight);
+                missionMemberInsightRepository.save(missionMemberInsight);
+
+            }
 
         }
 
-        return new ResponseEntity<>(missionMemberRepository.save(missionMember1), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
+
     }
 
     @Override
@@ -752,7 +825,31 @@ public class MissionServiceImpl implements IMissionService {
     }
 
     @Override
-    public void updateObjectiveStatus(Long id, Status status, String loggedInEmail) {
+    public ResponseEntity<?> updateObjectiveStatus(Long id, Status status, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Objective> objectiveOptional=objectiveRepository.findById(id);
+        if(!objectiveOptional.isPresent()) throw new ObjectiveNotFoundException("No objective found with  id  "+ id);
+
+        Objective objective=objectiveOptional.get();
+
+        Mission mission=objective.getMission();
+
+        HashMap<String, Object> missionMemberMap = isValidMissionMember(mission,loggedInEmail);
+        HashMap<String, Object> creatorOrChiefOfProjectMap = isCreatorOrChiefOfProject(mission.getProject(), loggedInEmail);
+        if(!(boolean)missionMemberMap.get("isValid")) {
+            if (!(boolean) creatorOrChiefOfProjectMap.get("isValid"))
+                throw new MissionMemberNotFoundException("No mission member found with mission id :"+objective.getMission().getMissionId()+" and email "+loggedInEmail);
+        }
+
+
+        objective.setStatus(status);
+        objective.setUpdatedOn(new java.util.Date());
+
+        return new ResponseEntity<>(objectiveRepository.save(objective),HttpStatus.ACCEPTED);
+
 
     }
 

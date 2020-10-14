@@ -1,5 +1,6 @@
 package com.highbrowape.demo.repository;
 
+import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Member;
 import com.highbrowape.demo.entity.Project;
 import com.highbrowape.demo.entity.User;
@@ -17,6 +18,8 @@ public interface MemberRepository extends JpaRepository<Member,Long> {
 
     List<Member> findByProjectProjectId(String id) ;
 
+
+    int countByProjectAndAuthority(Project project, Authority authority);
 
 
 

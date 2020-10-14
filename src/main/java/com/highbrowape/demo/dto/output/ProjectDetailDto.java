@@ -1,5 +1,6 @@
 package com.highbrowape.demo.dto.output;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.highbrowape.demo.entity.ProjectInsight;
 import lombok.Data;
 import java.util.Date;
@@ -14,12 +15,17 @@ public class ProjectDetailDto  {
 
     String description;
 
+
+    @JsonFormat(pattern = "dd-MM-yyy")
     Date addedOn;
 
+    @JsonFormat(pattern = "dd-MM-yyy")
     Date updatedOn;
 
+    @JsonFormat(pattern = "dd-MM-yyy")
     Date startingDate;
 
+    @JsonFormat(pattern = "dd-MM-yyy")
     Date endingDate;
 
     String imageUrl;

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/mission")
@@ -45,6 +46,12 @@ public class MissionController {
     public ResponseEntity<?>  addMemberToMission(@PathVariable("id")String id, @RequestBody ProjectMemberDto projectMemberDto, Principal principal){
         return missionService.addMemberToMission(projectMemberDto,id,principal.getName());
     }
+
+    @PostMapping("/{id}/members")
+    public ResponseEntity<?>  addMembersToMission(@PathVariable("id")String id, @RequestBody List<ProjectMemberDto> projectMemberDtoList, Principal principal){
+        return missionService.addMembersToMission(projectMemberDtoList,id,principal.getName());
+    }
+
     @PutMapping("/member/{id}/authority/{authority}")
     public ResponseEntity<?>  updateMemberAuthorityToMission(@PathVariable("id")Long id, @PathVariable("authority") Authority authority, Principal principal){
         return missionService.updateMemberAuthorityOfMission(authority,id,principal.getName());
@@ -60,7 +67,9 @@ public class MissionController {
     @GetMapping("/{id}/note")
     public ResponseEntity<?>  getProjectNote(@PathVariable("id")String id,  Principal principal){
         return missionService.getMissionNotes(id,principal.getName());
-    } @PostMapping("/{id}/note")
+    }
+
+    @PostMapping("/{id}/note")
     public ResponseEntity<?>  addNoteToMission(@PathVariable("id")String id, @RequestBody NoteDto noteDto,Principal principal){
         return missionService.addNoteToMission(noteDto,id,principal.getName());
     }
@@ -120,9 +129,9 @@ public class MissionController {
     }
 
     @PutMapping("/objective/{id}/status/{value}")
-    public void updateObjectiveStatus(@PathVariable("id")Long id, @PathVariable("value")Status value,Principal principal){
+    public ResponseEntity<?>  updateObjectiveStatus(@PathVariable("id")Long id, @PathVariable("value")Status value,Principal principal){
 
-        missionService.updateObjectiveStatus(id,value,principal.getName());
+        return missionService.updateObjectiveStatus(id,value,principal.getName());
     }
 
 

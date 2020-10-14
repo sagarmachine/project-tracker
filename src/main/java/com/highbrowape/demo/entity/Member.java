@@ -48,6 +48,7 @@ public class Member {
     Project project;
 
     @OneToMany(mappedBy = "member",cascade = {CascadeType.ALL})
+    @JsonIgnore
     List<MissionMember> missionMembers=new ArrayList<>();
 
 

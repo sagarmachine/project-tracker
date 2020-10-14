@@ -5,6 +5,8 @@ import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Status;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public interface IMissionService {
 
     ResponseEntity<?> addMissionAtLevel1(MissionAddDto missionAddDto, String id, String loggedInEmail);
@@ -13,6 +15,7 @@ public interface IMissionService {
 
     ResponseEntity<?> getMissionMembers(String id, String name);
     ResponseEntity<?> addMemberToMission(ProjectMemberDto projectMemberDto, String id, String loggedInEmail);
+    ResponseEntity<?> addMembersToMission(List<ProjectMemberDto> projectMemberDtoList, String id, String name);
     ResponseEntity<?> updateMemberAuthorityOfMission(Authority authority, Long id, String loggedInEmail);
     ResponseEntity<?> removeMemberFromMission(Long id, String loggedInEmail);
 
@@ -32,5 +35,5 @@ public interface IMissionService {
     ResponseEntity<?> addObjectiveToMission(ObjectiveDto objectiveDto, String id, String name);
     ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name);
     ResponseEntity<?> removeObjectiveFromMission(Long id, String name);
-    void updateObjectiveStatus(Long id, Status status,String loggedInEmail );
+    ResponseEntity<?>  updateObjectiveStatus(Long id, Status status,String loggedInEmail );
 }

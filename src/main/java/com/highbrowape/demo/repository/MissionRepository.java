@@ -19,4 +19,6 @@ public interface MissionRepository extends JpaRepository<Mission,Long> {
 
     List<Mission> findByProjectProjectIdAndLevel(String projectId, long level);
 
+    int countByProject(Project project);
+
 }

@@ -43,7 +43,6 @@ public class MissionMember {
 
     @ManyToOne
     @JoinColumn
-    @JsonIgnore
     Member member;
 
     @OneToOne(cascade = CascadeType.ALL)

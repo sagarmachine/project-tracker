@@ -5,6 +5,7 @@ import com.highbrowape.demo.entity.MissionMember;
 import com.highbrowape.demo.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MissionMemberRepository extends JpaRepository<MissionMember,Long> {
@@ -13,4 +14,5 @@ public interface MissionMemberRepository extends JpaRepository<MissionMember,Lon
 
     Optional<MissionMember> findByMissionMissionIdAndMemberUserEmail(String missionId, String email);
 
+    List<MissionMember> findByMissionMissionId(String id);
 }

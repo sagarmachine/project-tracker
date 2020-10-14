@@ -3,6 +3,7 @@ package com.highbrowape.demo.service;
 
 import com.highbrowape.demo.dto.input.*;
 
+import com.highbrowape.demo.dto.output.ProjectDetailDto;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Project;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public interface IProjectService {
 
     ResponseEntity<?> getProjectList(int pageNumber, String loggedInEmail);
 
-    ResponseEntity<Project> getProjectDetail(String projectId, String loggedInEmail);
+    ResponseEntity<ProjectDetailDto> getProjectDetail(String projectId, String loggedInEmail);
 
     ResponseEntity<?> getMyCreatedProjectList(int pageNumber, String loggedInEmail);
 
@@ -36,6 +37,7 @@ public interface IProjectService {
 
 
     ResponseEntity<?>  addMembersToProject(String id, List<ProjectMemberDto> projectMemberDtoList, String loggedInEmail);
+
     //member DB id
      ResponseEntity<?>  updateMemberAuthorityToProject(Long id, @PathVariable("authority") Authority authority, String loggedInEmail);
      //member DB id
