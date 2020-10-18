@@ -138,7 +138,7 @@ public class MissionController {
 
 
     @PostMapping("/{id}/conversation")
-    public  ResponseEntity<?> startConversationToMission(@PathVariable("id")Long id,@Valid @RequestBody ConversationDto conversationDto, Principal principal){
+    public  ResponseEntity<?> startConversationToMission(@PathVariable("id")String id,@Valid @RequestBody ConversationDto conversationDto, Principal principal){
 
         return missionService.addMissionConversation(conversationDto,id,principal.getName());
 
@@ -150,7 +150,7 @@ public class MissionController {
         return missionService.getConversation(id,principal.getName());
     }
     @GetMapping("/{id}/conversation")
-    public ResponseEntity<?> getConversations(@PathVariable("id")Long id, Principal principal)//missionId
+    public ResponseEntity<?> getConversations(@PathVariable("id")String id, Principal principal)//missionId
     {
         return missionService.getMissionConversations(id,principal.getName());
     }

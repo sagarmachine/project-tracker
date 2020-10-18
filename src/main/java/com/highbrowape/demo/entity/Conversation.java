@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -40,11 +41,16 @@ public class Conversation {
     String startedOver;
 
     @OneToMany(mappedBy = "conversation",cascade = {CascadeType.ALL})
-    List<Comment> comments;
+    List<Comment> comments= new ArrayList<Comment>();
 
     @ManyToOne
     @JoinColumn
     @JsonIgnore
     Mission mission;
+
+    public void addComment(Comment comment){
+        comments.add(comment);
+        comment.setConversation(this);
+    }
 
 }
