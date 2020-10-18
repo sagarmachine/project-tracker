@@ -453,9 +453,9 @@ public class MissionServiceImpl implements IMissionService {
                 throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
         }
 
+     List<Note> noteList=noteRepository.findByMission(mission);
 
-
-        return new ResponseEntity<>(noteRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(noteList,HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -582,8 +582,8 @@ public class MissionServiceImpl implements IMissionService {
                 throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
         }
 
-
-        return new ResponseEntity<>(linkRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+        List<Link> linkList= linkRepository.findByMission(mission);
+        return new ResponseEntity<>(linkList,HttpStatus.ACCEPTED);
 
     }
 
@@ -713,8 +713,9 @@ public class MissionServiceImpl implements IMissionService {
                 throw new MissionMemberNotFoundException("No mission member found with mission id :"+id+" and email "+loggedInEmail);
         }
 
+        List<Objective> objectiveList=objectiveRepository.findByMission(mission);
 
-        return new ResponseEntity<>(objectiveRepository.findByMissionMissionId(id),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(objectiveList,HttpStatus.ACCEPTED);
 
     }
 
