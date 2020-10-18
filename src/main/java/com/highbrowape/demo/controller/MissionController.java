@@ -137,9 +137,40 @@ public class MissionController {
 
 
 
-    @PostMapping("/conversation/{id}")
-    public  void startConversationToMission(@Valid @RequestBody LinkDto linkDto, Principal principal){
+    @PostMapping("/{id}/conversation")
+    public  ResponseEntity<?> startConversationToMission(@PathVariable("id")Long id,@Valid @RequestBody ConversationDto conversationDto, Principal principal){
 
+        return missionService.addMissionConversation(conversationDto,id,principal.getName());
+
+    }
+
+    @GetMapping("/conversation/{id}")
+    public ResponseEntity<?> getConversation(@PathVariable("id")Long id, Principal principal)//conversationId
+    {
+        return missionService.getConversation(id,principal.getName());
+    }
+    @GetMapping("/{id}/conversation")
+    public ResponseEntity<?> getConversations(@PathVariable("id")Long id, Principal principal)//missionId
+    {
+        return missionService.getMissionConversations(id,principal.getName());
+    }
+
+   @DeleteMapping("/conversation/{id}")
+    public  ResponseEntity<?> deleteConversation(@PathVariable("id")Long id, Principal principal){
+    return missionService.removeConversation(id,principal.getName());
+    }
+
+
+
+
+    @PostMapping("/conversation/{id}/comment")
+    public  ResponseEntity<?> addComment(@PathVariable("id")Long id,@RequestBody CommentDto commentDto,Principal principal){
+        return missionService.addComment(commentDto,id,principal.getName());
+    }
+
+    @DeleteMapping("/comment/{id}")
+    public  ResponseEntity<?> removeComment(@PathVariable("id")Long id,Principal principal){
+return missionService.removeComment(id,principal.getName());
     }
 
 

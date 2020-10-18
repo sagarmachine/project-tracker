@@ -36,4 +36,18 @@ public interface IMissionService {
     ResponseEntity<?> updateObjectiveOfMission(ObjectiveDto objectiveDto, Long id, String name);
     ResponseEntity<?> removeObjectiveFromMission(Long id, String name);
     ResponseEntity<?>  updateObjectiveStatus(Long id, Status status,String loggedInEmail );
+
+
+
+    ResponseEntity<?> getMissionConversations(Long io,String loggedInEmail);
+    ResponseEntity<?> getConversation(Long id,String loggedInEmail);
+    ResponseEntity<?> addMissionConversation(ConversationDto conversationDto,Long id,String loggedInEmail);
+    ResponseEntity<?> removeConversation(Long id,String loggedInEmail);
+//    ResponseEntity<?>  updateObjectiveStatus(Long id, Status status,String loggedInEmail );
+
+
+    ResponseEntity<?> addComment(CommentDto commentDto ,Long id,String loggedInEmail);
+    ResponseEntity<?> removeComment(Long id,String loggedInEmail);
+
+
 }

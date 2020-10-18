@@ -31,10 +31,10 @@ public class Conversation {
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
-    Date StartedOn;
+    Date startedOn;
 
     @Column(nullable = false)
-    String StartedBy;
+    String startedBy;
 
     @Column(nullable = false)
     String startedOver;

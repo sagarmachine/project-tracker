@@ -853,6 +853,38 @@ public class MissionServiceImpl implements IMissionService {
 
     }
 
+    @Override
+    //missionId
+    public ResponseEntity<?> getMissionConversations(Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    //conversation DB id
+    public ResponseEntity<?> getConversation(Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addMissionConversation(ConversationDto conversationDto, Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeConversation(Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> addComment(CommentDto commentDto, Long id, String loggedInEmail) {
+        return null;
+    }
+
+    @Override
+    public ResponseEntity<?> removeComment(Long id, String loggedInEmail) {
+        return null;
+    }
+
     public HashMap<String ,Object> isValidUser(String email) {
 
         HashMap<String,Object> result= new HashMap<>();

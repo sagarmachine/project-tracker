@@ -1,9 +1,7 @@
 package com.highbrowape.demo.controller;
 
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -11,9 +9,11 @@ import java.security.Principal;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("/principaltest")
-    public String test1(Principal principal){
-        return principal.getName();
+    @PostMapping("/principaltest")
+    public String test1(@RequestParam("message")String message)
+    {
+        return message;
+
     }
 
 }
