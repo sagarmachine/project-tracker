@@ -199,7 +199,9 @@ public class InsightServiceImpl implements IInsightService {
             missionMemberInsight.setObjectiveCount(missionsMember.getMissionMemberInsight().getObjectiveCount()+n);
             missionMemberInsightRepository.save(missionMemberInsight);
 
+            System.out.println(missionMemberInsight.getId());
             MemberInsight MemberInsight= missionsMember.getMember().getMemberInsight();
+            System.out.println(MemberInsight.getId());
             MemberInsight.setObjectiveCount(MemberInsight.getObjectiveCount()+n);
             memberInsightRepository.save(MemberInsight);
 

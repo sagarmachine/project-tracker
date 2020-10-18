@@ -39,6 +39,7 @@ public class Objective {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
+
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
