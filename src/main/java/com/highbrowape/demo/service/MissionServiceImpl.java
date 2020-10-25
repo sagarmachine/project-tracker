@@ -934,6 +934,7 @@ public class MissionServiceImpl implements IMissionService {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Conversation conversation = mapper.map(conversationDto, Conversation.class);
+        conversation.setStartedBy(loggedInEmail);
         conversation.setMission(mission);
 
         mission.addConversations(conversation);

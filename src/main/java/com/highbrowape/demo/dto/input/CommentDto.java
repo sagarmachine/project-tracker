@@ -6,7 +6,7 @@ import javax.persistence.Column;
 
 
 @Data
-public class CommentDto {
+public class  CommentDto {
     String comment;
 
     String description;
