@@ -70,8 +70,11 @@ public class UserServiceImpl implements IUserService {
 
         User user = mapper.map(userRegister,User.class);
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        user.setPassword(passwordEncoder.encode((user.getPassword() == null) ? "123" : user.getPassword()));
         user.setFirstName(user.getFirstName());
+        user.setLastName(user.getLastName());
+
 
 
         UserInsights userInsights = new UserInsights();
@@ -123,6 +126,20 @@ public class UserServiceImpl implements IUserService {
             throw  new InvalidCredentials("Invalid Credentials");
 
 
+
+    }
+
+    @Override
+    public ResponseEntity<?> createResponseForAuthenticatedUser(String email) {
+        User user = userRepository.findByEmail(email).get();
+        String jwt = jwtUtil.generateToken(new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),new ArrayList<>()));
+
+        HttpHeaders httpHeaders= new HttpHeaders();
+        httpHeaders.add("Authorization","Bearer "+jwt);
+        httpHeaders.add("Name",user.getFirstName()+" "+user.getLastName());
+        httpHeaders.add("Email",user.getEmail());
+        httpHeaders.add("ImageUrl",user.getImageUrl());
+        return new ResponseEntity<>(user,httpHeaders,HttpStatus.OK);
 
     }
 }

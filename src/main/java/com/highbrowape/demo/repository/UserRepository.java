@@ -13,6 +13,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByEmail(String email);
 
+    boolean existsByEmail(String email);
+
 
     @Query(value="select new com.highbrowape.demo.dto.output.UserList(email,firstName,lastName,addedOn,imageUrl,thumbnailUrl) from User where email like %:search% OR firstName like %:search% OR lastName like %:search% ")
     List<UserList> findEmailBySearch(String search, Pageable pageable);

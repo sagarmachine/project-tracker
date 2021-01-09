@@ -38,6 +38,11 @@ public class UserController {
         return userService.authenticateUser(userLogin);
     }
 
+    @GetMapping("/my_profile/{email}")
+    ResponseEntity<?> getMyProfile(){
+        return null;
+    }
+
     @GetMapping("/{search}/{pageNumber}")
     public ResponseEntity<?> getUsers(@PathVariable("search")String search, @PathVariable("pageNumber")int pageNumber){
 

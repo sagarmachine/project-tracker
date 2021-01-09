@@ -11,4 +11,6 @@ public interface IUserService extends UserDetailsService {
     ResponseEntity<?> register(UserRegister userRegister);
 
     ResponseEntity<?> authenticateUser(UserLogin userLogin);
+
+    ResponseEntity<?> createResponseForAuthenticatedUser(String email);
 }

@@ -1,12 +1,14 @@
 package com.highbrowape.demo.dto.input;
 
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 
 @Data
+@Builder
 public class UserRegister {
 
     @NotNull(message = "email name can't be null")
@@ -18,7 +20,6 @@ public class UserRegister {
     @NotNull(message = "last name can't be null")
     String lastName;
 
-    @NotNull(message = "password  can't be null")
     String password;
 
     String  imageUrl;
