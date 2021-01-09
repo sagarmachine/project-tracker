@@ -25,10 +25,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     AuthenticationEntryPointImp authenticationEntryPoint;
 
     @Autowired
-    AuthenticationFilter authenticationFilter;
+    AuthorizationFilter authorizationFilter;
 
     @Autowired
     IUserService userService;
+
+    @Autowired
+    GoogleOAuthSuccessHandler googleOAuthSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,8 +46,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
             http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and().csrf().disable()
                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-             .and().addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//                .oauth2Login().successHandler(oAuth2SuccessHandler).failureHandler(oAuth2FailureHandler);//.defaultSuccessUrl("/api/v1/client/oauthAuthorization");
+             .and().addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login().successHandler(googleOAuthSuccessHandler);//.failureHandler(oAuth2FailureHandler);//.defaultSuccessUrl("/api/v1/client/oauthAuthorization");
         http.cors();
 
     }

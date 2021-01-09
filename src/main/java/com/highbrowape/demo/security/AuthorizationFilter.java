@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 @Component
-public class AuthenticationFilter extends OncePerRequestFilter {
+public class AuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
     IUserService userService;
