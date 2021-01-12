@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.HashMap;
 
 @RestController
@@ -38,9 +39,9 @@ public class UserController {
         return userService.authenticateUser(userLogin);
     }
 
-    @GetMapping("/my_profile/{email}")
-    ResponseEntity<?> getMyProfile(){
-        return null;
+    @GetMapping("/my_profile")
+    Object getMyProfile(Principal principal){
+        return userRepository.findByEmail(principal.getName()).get();
     }
 
     @GetMapping("/{search}/{pageNumber}")

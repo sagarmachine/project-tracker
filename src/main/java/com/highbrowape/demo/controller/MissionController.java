@@ -5,6 +5,7 @@ import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Status;
 import com.highbrowape.demo.service.IMissionService;
+import com.highbrowape.demo.service.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,9 @@ public class MissionController {
 
     @Autowired
     IMissionService missionService;
+
+    @Autowired
+    INotificationService  notificationService;
 
 
     @PostMapping("/level/1/{id}")
@@ -174,6 +178,11 @@ return missionService.removeComment(id,principal.getName());
     }
 
 
+
+    @GetMapping("/{missionId}/notification")
+    ResponseEntity<?> getMissionNotification (@PathVariable("missionId")String  missionId){
+        return notificationService.getMissionNotifications(missionId);
+    }
 
 
 }

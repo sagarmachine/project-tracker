@@ -6,6 +6,7 @@ import com.highbrowape.demo.dto.output.ProjectDetailDto;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Project;
 import com.highbrowape.demo.repository.ProjectRepository;
+import com.highbrowape.demo.service.INotificationService;
 import com.highbrowape.demo.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,9 @@ public class ProjectController {
 
     @Autowired
     ProjectRepository projectRepository;
+
+    @Autowired
+    INotificationService notificationService;
 
 
     @PostMapping("")
@@ -131,6 +135,11 @@ public class ProjectController {
     public ResponseEntity<?>  removeLinkFromProject(@PathVariable("id")Long id, Principal principal){
 
         return projectService.removeLinkFromProject(id,principal.getName());
+    }
+
+    @GetMapping("/{projectId}/notification")
+    ResponseEntity<?> getProjectNotification (@PathVariable("projectId")String  projectId){
+        return notificationService.getProjectNotifications(projectId);
     }
 
 

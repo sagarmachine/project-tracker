@@ -48,6 +48,9 @@ public class ProjectServiceImpl implements IProjectService {
     @Autowired
     IInsightService insightService;
 
+    @Autowired
+    INotificationService notificationService;
+
     public ResponseEntity<?> addProject(ProjectAdd projectAdd, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
@@ -134,6 +137,8 @@ public class ProjectServiceImpl implements IProjectService {
         projectInsight.setProject(project);
         project.setProjectInsight(projectInsight);
 
+
+
            projectInsightRepository.save(projectInsight);
         return new ResponseEntity<>(projectRepository.save(project), HttpStatus.ACCEPTED);
     }
@@ -167,6 +172,10 @@ public class ProjectServiceImpl implements IProjectService {
 
 
             try {
+
+                //        ProjectNotification projectNotification= new ProjectNotification();
+
+
                 projectRepository.save(project);
 
             } catch (DataIntegrityViolationException exception) {
@@ -229,7 +238,10 @@ public class ProjectServiceImpl implements IProjectService {
 
         insightService.userActionUpdate(loggedInEmail,project.getProjectName()+" Project Updated");
 
-        return new ResponseEntity<>(projectRepository.save(project), HttpStatus.OK);
+        Project updatedProject =projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" updated project");
+
+        return new ResponseEntity<>(updatedProject, HttpStatus.OK);
     }
 
 
@@ -451,7 +463,10 @@ public class ProjectServiceImpl implements IProjectService {
 
         insightService.userActionUpdate(loggedInEmail,"Members Added to "+project.getProjectName());
 
-        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" added new members");
+
+        return new ResponseEntity<>(updatedProject,HttpStatus.ACCEPTED);
 
     }
 
@@ -479,8 +494,10 @@ public class ProjectServiceImpl implements IProjectService {
         else  throw new InvalidAuthorityException(loggedInEmail + " is not allowed to update the project ");
 
         insightService.userActionUpdate(loggedInEmail,"Members Added to "+project.getProjectName());
+        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" added new members");
 
-        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(updatedProject,HttpStatus.ACCEPTED);
     }
 
 
@@ -564,6 +581,7 @@ public class ProjectServiceImpl implements IProjectService {
 
         insightService.userActionUpdate(loggedInEmail,member.getEmail()+" removed from project "+project.getProjectName());
 
+        notificationService.addProjectNotification(project,member.getUser().getFirstName()+" is removed from thr project.");
 
         return new ResponseEntity<>("MEMBER REMOVED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
@@ -607,9 +625,11 @@ public class ProjectServiceImpl implements IProjectService {
 
 
         insightService.userActionUpdate(loggedInEmail,"Note added to project "+project.getProjectName());
+        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" added new notes to the project");
 
 
-        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(updatedProject,HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -666,6 +686,8 @@ public class ProjectServiceImpl implements IProjectService {
 
         insightService.userActionUpdate(loggedInEmail,"Note removed from project "+project.getProjectName());
 
+//        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(project,loggedInEmail+" removed some notes from the project");
 
         return new ResponseEntity<>("PROJECT NOTE DELETED SUCCESSFULLY",HttpStatus.ACCEPTED);
 
@@ -709,9 +731,12 @@ public class ProjectServiceImpl implements IProjectService {
 
         insightService.userActionUpdate(loggedInEmail," new link added to project "+project.getProjectName());
 
+        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" added new links to the project");
 
 
-        return new ResponseEntity<>(projectRepository.save(project),HttpStatus.ACCEPTED);
+
+        return new ResponseEntity<>(updatedProject,HttpStatus.ACCEPTED);
     }
 
     @Override
@@ -770,6 +795,8 @@ public class ProjectServiceImpl implements IProjectService {
 
 
         insightService.userActionUpdate(loggedInEmail,"  link removed from project "+project.getProjectName());
+        Project updatedProject = projectRepository.save(project);
+        notificationService.addProjectNotification(updatedProject,loggedInEmail+" removed some links from the project");
 
         return new ResponseEntity<>("LINK DELETED SUCCESSFULLY ",HttpStatus.ACCEPTED);
     }
