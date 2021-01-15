@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("/api/v1/mission")
@@ -138,8 +140,12 @@ public class MissionController {
         return missionService.updateObjectiveStatus(id,value,principal.getName());
     }
 
-
-
+//setting time zone to IST (default UTC)
+    @PostConstruct
+    public void init(){
+        // Setting Spring Boot SetTimeZone
+        TimeZone.setDefault(TimeZone.getTimeZone("IST"));
+    }
 
     @PostMapping("/{id}/conversation")
     public  ResponseEntity<?> startConversationToMission(@PathVariable("id")String id,@Valid @RequestBody ConversationDto conversationDto, Principal principal){

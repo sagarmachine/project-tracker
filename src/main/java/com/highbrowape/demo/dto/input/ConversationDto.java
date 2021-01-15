@@ -20,6 +20,6 @@ public class ConversationDto {
 
     String startedBy;
 
-    String startedOver;
+    String startedOver="null";
 
 }

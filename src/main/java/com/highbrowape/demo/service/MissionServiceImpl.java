@@ -965,6 +965,7 @@ link1.setAddedBy(link.getAddedBy());
         Conversation conversation = mapper.map(conversationDto, Conversation.class);
         conversation.setStartedBy(loggedInEmail);
         conversation.setMission(mission);
+        conversation.setStartedByImage(user.getImageUrl());
 
         mission.addConversations(conversation);
         missionRepository.save(mission);
@@ -1038,9 +1039,9 @@ link1.setAddedBy(link.getAddedBy());
         comment.setAddedBy(loggedInEmail);
         comment.setAddedOn(new java.util.Date());
         comment.setConversation(conversation);
-
+        comment.setAddedByImage(user.getImageUrl());
         conversation.addComment(comment);
-        conversationRepository.save(conversation);
+//        conversationRepository.save(conversation);
 
 
         return new ResponseEntity<>(commentRepository.save(comment), HttpStatus.ACCEPTED);

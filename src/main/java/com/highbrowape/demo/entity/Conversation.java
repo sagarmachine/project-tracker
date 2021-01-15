@@ -30,15 +30,17 @@ public class Conversation {
     @Column(nullable = false)
     String conversation;
 
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @CreationTimestamp()
+    @JsonFormat(pattern = "E, dd MMM yyyy::HH:mm:ss z", timezone = "IST")
     Date startedOn;
+
+    String startedByImage;
 
     @Column(nullable = false)
     String startedBy;
 
     @Column(nullable = false)
-    String startedOver;
+    String startedOver="null";
 
     @OneToMany(mappedBy = "conversation",cascade = {CascadeType.ALL})
     List<Comment> comments= new ArrayList<Comment>();

@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
@@ -16,14 +17,14 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Comment {
+public class Comment implements Serializable {
 
     @Id
     @GeneratedValue
     long id;
 
     @CreationTimestamp
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "E, dd MMM yyyy::HH:mm:ss z", timezone = "IST")
     Date addedOn;
 
     @Column(nullable = false)
@@ -34,6 +35,9 @@ public class Comment {
 
     @Column(nullable = false)
     String description;
+
+    String addedByImage;
+
 
     @ManyToOne
     @JoinColumn
