@@ -111,7 +111,6 @@ public class MissionServiceImpl implements IMissionService {
                 noteRepository.save(note1);
 
             }
-            insightService.noteAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getNotes().size());
         }
 
         if (missionAddDto.getLinks() != null) {
@@ -122,7 +121,8 @@ public class MissionServiceImpl implements IMissionService {
                 mission.addLink(link1);
                 linkRepository.save(link1);
             }
-            insightService.linkAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getLinks().size());
+            System.out.println("-----------------------> "+missionAddDto.getLinks().size());
+
         }
 
 
@@ -159,6 +159,8 @@ public class MissionServiceImpl implements IMissionService {
 
         missionInsightRepoistory.save(missionInsight);
 
+       if(missionAddDto.getLinks()!=null)insightService.linkAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getLinks().size());
+        if(missionAddDto.getNotes()!=null) insightService.noteAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getNotes().size());
 
         notificationService.addProjectNotification(project, loggedInEmail + " add new mission to the project " + missionAddDto.getName());
         return new ResponseEntity<>(missionRepository.save(mission), HttpStatus.ACCEPTED);
@@ -220,7 +222,7 @@ public class MissionServiceImpl implements IMissionService {
                 noteRepository.save(note1);
 
             }
-            insightService.noteAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getNotes().size());
+//            insightService.noteAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getNotes().size());
 
         }
         if (missionAddDto.getLinks() != null) {
@@ -231,7 +233,7 @@ public class MissionServiceImpl implements IMissionService {
                 mission1.addLink(link1);
                 linkRepository.save(link1);
             }
-            insightService.linkAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getLinks().size());
+//            insightService.linkAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getLinks().size());
 
         }
         if (missionAddDto.getMember() != null) {
@@ -265,6 +267,8 @@ public class MissionServiceImpl implements IMissionService {
         mission1.setMissionInsight(missionInsight);
 
         missionInsightRepoistory.save(missionInsight);
+        if(missionAddDto.getLinks()!=null)insightService.linkAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getLinks().size());
+        if(missionAddDto.getNotes()!=null) insightService.noteAddedUpdate(mission.getMissionId(), loggedInEmail, missionAddDto.getNotes().size());
 
         notificationService.addMissionNotification(mission1.getMissionParent(),loggedInEmail +"added new mission to "+mission1.getMissionParent().getName());
 
@@ -881,6 +885,9 @@ link1.setAddedBy(link.getAddedBy());
         objective.setStatus(status);
         objective.setUpdatedOn(new java.util.Date());
 
+
+        if(status.toString().equals(Status.DONE.toString()))
+              insightService.objectiveCompletionUpdate(mission.getMissionId(),loggedInEmail,1);
 
         notificationService.addMissionNotification(mission, loggedInEmail+" updated an objective STATUS to "+status);
 

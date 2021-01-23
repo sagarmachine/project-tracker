@@ -81,7 +81,7 @@ public class InsightServiceImpl implements IInsightService {
     public void objectiveRemovedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
-        Mission parent= mission.getMissionParent();
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+n);
@@ -128,8 +128,8 @@ public class InsightServiceImpl implements IInsightService {
     public void objectiveCompletionUpdate(String missionId, String loggedInEmail, int n) {
 
         Mission mission=missionRepository.findByMissionId(missionId).get();
-
-        Mission parent= mission.getMissionParent();
+        System.out.println("objective marked as done ======> ------------------");
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setCompletedObjectiveCount(parent.getMissionInsight().getCompletedObjectiveCount()+n);
@@ -175,8 +175,8 @@ public class InsightServiceImpl implements IInsightService {
     @Override
     public void objectiveAddedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
-
-        Mission parent= mission.getMissionParent();
+        System.out.println("================== objective Added ");
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setObjectiveCount(parent.getMissionInsight().getObjectiveCount()+n);
@@ -224,7 +224,9 @@ public class InsightServiceImpl implements IInsightService {
     public void linkAddedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
-        Mission parent= mission.getMissionParent();
+        System.out.println("------------ adding links"+ n);
+
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setLinkCount(parent.getMissionInsight().getLinkCount()+n);
@@ -269,7 +271,7 @@ public class InsightServiceImpl implements IInsightService {
     public void linkRemovedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
-        Mission parent= mission.getMissionParent();
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setLinkCount(parent.getMissionInsight().getLinkCount()-n);
@@ -303,16 +305,15 @@ public class InsightServiceImpl implements IInsightService {
 
         projectRepository.save(project);
 
-
-
     }
 
 
     @Override
     public void noteAddedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
+        System.out.println("------------ adding notes------------------"+ n);
 
-        Mission parent= mission.getMissionParent();
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setNoteCount(parent.getMissionInsight().getNoteCount()+n);
@@ -357,7 +358,7 @@ public class InsightServiceImpl implements IInsightService {
     public void noteRemovedUpdate(String missionId, String loggedInEmail, int n) {
         Mission mission=missionRepository.findByMissionId(missionId).get();
 
-        Mission parent= mission.getMissionParent();
+        Mission parent= mission;
 
         while(parent!=null){
             parent.getMissionInsight().setNoteCount(parent.getMissionInsight().getNoteCount()-n);
