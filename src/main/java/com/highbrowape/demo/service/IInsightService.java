@@ -1,5 +1,10 @@
 package com.highbrowape.demo.service;
 
+import org.springframework.http.ResponseEntity;
+
+import java.util.HashMap;
+import java.util.List;
+
 public interface IInsightService {
 
 
@@ -18,5 +23,8 @@ public interface IInsightService {
    void objectiveRemovedUpdate(String missionId,String  loggedInEmail,int n);
 
    void userActionUpdate(String  loggedInEmail,String comment);
+
+   void addUserInteraction(String email, int n);
+   HashMap<String,Object> getUSerCommentChartData(String email);
 
 }

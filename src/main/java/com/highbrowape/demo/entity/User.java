@@ -68,6 +68,15 @@ public class User {
     @OneToMany(mappedBy = "user", cascade=CascadeType.ALL)
     Set<UserAction> userActions= new HashSet<>();
 
+    @OneToMany(mappedBy = "user",cascade = {CascadeType.ALL})
+    @JsonIgnore
+    Set<UserInteraction> userInteractions= new HashSet<>();
+
+    public void addUserInteraction(UserInteraction userInteraction){
+        userInteractions.add(userInteraction);
+        userInteraction.setUser(this);
+    }
+
     public void addUserAction(UserAction userAction){
 
         userActions.add(userAction);

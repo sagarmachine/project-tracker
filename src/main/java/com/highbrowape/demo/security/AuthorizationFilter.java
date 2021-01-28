@@ -1,5 +1,6 @@
 package com.highbrowape.demo.security;
 
+import com.highbrowape.demo.service.IInsightService;
 import com.highbrowape.demo.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     @Autowired
    JWTUtil jwtUtil;
 
+    @Autowired
+    IInsightService insightService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         String authorization= httpServletRequest.getHeader("Authorization");
@@ -47,6 +51,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 context.setAuthentication(usernamePasswordAuthenticationToken);
                 SecurityContextHolder.setContext(context);
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                insightService.addUserInteraction(user.getUsername(),1);
             }
         }
 

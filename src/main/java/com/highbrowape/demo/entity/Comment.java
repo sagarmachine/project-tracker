@@ -27,6 +27,14 @@ public class Comment implements Serializable {
     @JsonFormat(pattern = "E, dd MMM yyyy::HH:mm:ss z", timezone = "IST")
     Date addedOn;
 
+//    @CreationTimestamp
+//    @JsonFormat(pattern = "MM", timezone = "IST")
+    int month;
+
+//    @CreationTimestamp
+//    @JsonFormat(pattern = "dd", timezone = "IST")
+    int date;
+
     @Column(nullable = false)
     String addedBy;
 

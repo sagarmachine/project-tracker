@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -974,6 +977,10 @@ link1.setAddedBy(link.getAddedBy());
         conversation.setMission(mission);
         conversation.setStartedByImage(user.getImageUrl());
 
+        LocalDate localDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        conversation.setMonth(localDate.getMonthValue());
+        conversation.setDate(localDate.getDayOfMonth());
+
         mission.addConversations(conversation);
         missionRepository.save(mission);
 
@@ -1047,6 +1054,11 @@ link1.setAddedBy(link.getAddedBy());
         comment.setAddedOn(new java.util.Date());
         comment.setConversation(conversation);
         comment.setAddedByImage(user.getImageUrl());
+
+        LocalDate localDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        comment.setMonth(localDate.getMonthValue());
+        comment.setDate(localDate.getDayOfMonth());
+
         conversation.addComment(comment);
 //        conversationRepository.save(conversation);
 

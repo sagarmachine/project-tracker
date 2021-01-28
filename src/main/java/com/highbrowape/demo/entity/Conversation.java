@@ -34,6 +34,11 @@ public class Conversation {
     @JsonFormat(pattern = "E, dd MMM yyyy::HH:mm:ss z", timezone = "IST")
     Date startedOn;
 
+    int month;
+
+
+    int date;
+
     String startedByImage;
 
     @Column(nullable = false)
