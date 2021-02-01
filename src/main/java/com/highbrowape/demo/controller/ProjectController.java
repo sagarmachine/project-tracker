@@ -11,8 +11,11 @@ import com.highbrowape.demo.service.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/api/v1/project")
@@ -26,6 +29,7 @@ public class ProjectController {
 
     @Autowired
     INotificationService notificationService;
+
 
 
     @PostMapping("")
@@ -140,6 +144,38 @@ public class ProjectController {
     @GetMapping("/{projectId}/notification")
     ResponseEntity<?> getProjectNotification (@PathVariable("projectId")String  projectId){
         return notificationService.getProjectNotifications(projectId);
+    }
+
+
+    @PostMapping("/{id}/conversation")
+    public  ResponseEntity<?> startConversationToProject(@PathVariable("id")String id, @Valid @RequestBody ConversationDto conversationDto, Principal principal){
+
+        return projectService.addProjectConversation(conversationDto,id,principal.getName());
+
+    }
+
+    @GetMapping("/conversation/{id}")
+    public ResponseEntity<?> getConversation(@PathVariable("id")Long id, Principal principal)//conversationId
+    {
+        return projectService.getConversation(id,principal.getName());
+    }
+    @GetMapping("/{id}/conversation")
+    public ResponseEntity<?> getConversations(@PathVariable("id")String id, Principal principal)//missionId
+    {
+        return projectService.getProjectConversations(id,principal.getName());
+    }
+
+    @DeleteMapping("/conversation/{id}")
+    public  ResponseEntity<?> deleteConversation(@PathVariable("id")Long id, Principal principal){
+        return projectService.removeConversation(id,principal.getName());
+    }
+
+
+
+
+    @PostMapping("/conversation/{id}/comment")
+    public  ResponseEntity<?> addComment(@PathVariable("id")Long id,@RequestBody CommentDto commentDto,Principal principal){
+        return projectService.addComment(commentDto,id,principal.getName());
     }
 
 

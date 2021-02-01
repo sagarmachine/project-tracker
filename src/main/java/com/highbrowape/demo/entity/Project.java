@@ -64,6 +64,9 @@ public class Project {
     @JoinColumn
     ProjectInsight projectInsight;
 
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<ProjectConversation> projectConversations = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "project",cascade =CascadeType.REMOVE)
 //    Set<MemberInsight> memberInsights= new HashSet<>();
@@ -117,5 +120,10 @@ public class Project {
         missions.add(mission);
         mission.setProject(this);
     }
-    
+    public void addProjectConversations(ProjectConversation conversation) {
+        projectConversations.add(conversation);
+        conversation.setProject(this);
+    }
+
+
 }

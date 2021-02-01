@@ -19,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -50,6 +52,12 @@ public class ProjectServiceImpl implements IProjectService {
 
     @Autowired
     INotificationService notificationService;
+
+    @Autowired
+    ProjectConversationRepository projectConversationRepository;
+
+    @Autowired
+    ProjectCommentRepository projectCommentRepository;
 
     public ResponseEntity<?> addProject(ProjectAdd projectAdd, String loggedInEmail) {
         ModelMapper mapper = new ModelMapper();
@@ -383,13 +391,7 @@ public class ProjectServiceImpl implements IProjectService {
 
 
 
-    private boolean isValidMember(String projectId, String loggedInEmail) {
 
-        long count=memberRepository.countByProjectProjectIdAndUserEmail(projectId,loggedInEmail);
-
-        if(count>0) return true;
-        return false;
-    }
 
     @Override
     public ResponseEntity<?> getProjectList(int pageNumber, String loggedInEmail) {
@@ -417,12 +419,6 @@ public class ProjectServiceImpl implements IProjectService {
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 
-    public boolean isValidUser(String email) {
-
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-        if (optionalUser.isPresent()) return true;
-        return false;
-    }
 
 
     @Override
@@ -800,6 +796,188 @@ public class ProjectServiceImpl implements IProjectService {
 
         return new ResponseEntity<>("LINK DELETED SUCCESSFULLY ",HttpStatus.ACCEPTED);
     }
+
+    @Override
+    //projectId
+    public ResponseEntity<?> getProjectConversations(String id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser2(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project  found with id  " + id);
+
+        Project project= projectOptional.get();
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
+        if (!(boolean) projectMemberMap.get("isValid")) {
+
+                throw new ProjectMemberNotFoundException("No project member found with project id :" + id + " and email " + loggedInEmail);
+        }
+
+        List<ProjectConversation> conversationList = projectConversationRepository.findByProjectOrderByStartedOnDesc(project);
+        return new ResponseEntity<>(conversationList, HttpStatus.ACCEPTED);
+
+    }
+
+    @Override
+    //projectConversation DB id
+    public ResponseEntity<?> getConversation(Long id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser2(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> conversationMap = isValidConversation(id);
+        if (!(boolean) conversationMap.get("isValid"))
+            throw new ConversationNotFoundException(" No Conversation found with  id :" + id);
+        ProjectConversation conversation = (ProjectConversation) conversationMap.get("conversation");
+        Project project = conversation.getProject();
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(project.getProjectId(), loggedInEmail);
+        if (!(boolean) projectMemberMap.get("isValid")) {
+
+                throw new ProjectMemberNotFoundException("No project member found with project id :" + project.getId() + " and email " + loggedInEmail);
+        }
+
+        return new ResponseEntity<>(conversation, HttpStatus.ACCEPTED);
+
+    }
+
+    @Override
+    public ResponseEntity<?> addProjectConversation(ConversationDto conversationDto, String id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser2(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        Optional<Project> projectOptional = projectRepository.findByProjectId(id);
+        if (!projectOptional.isPresent()) throw new ProjectNotFoundException("No project  found with id  " + id);
+
+        Project project= projectOptional.get();
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(id,loggedInEmail);
+        if (!(boolean) projectMemberMap.get("isValid")) {
+
+            throw new ProjectMemberNotFoundException("No project member found with project id :" + id + " and email " + loggedInEmail);
+        }
+
+
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectConversation conversation = mapper.map(conversationDto, ProjectConversation.class);
+        conversation.setStartedBy(loggedInEmail);
+        conversation.setProject(project);
+        conversation.setStartedByImage(user.getImageUrl());
+
+        LocalDate localDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        conversation.setMonth(localDate.getMonthValue());
+        conversation.setDate(localDate.getDayOfMonth());
+
+        project.addProjectConversations(conversation);
+        projectRepository.save(project);
+
+
+        return new ResponseEntity<>(projectConversationRepository.save(conversation), HttpStatus.ACCEPTED);
+
+    }
+
+    @Override
+    public ResponseEntity<?> removeConversation(Long id, String loggedInEmail) {
+        HashMap<String, Object> userMap = isValidUser2(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> conversationMap = isValidConversation(id);
+        if (!(boolean) conversationMap.get("isValid"))
+            throw new ConversationNotFoundException(" No Conversation found with  id :" + id);
+        ProjectConversation conversation = (ProjectConversation) conversationMap.get("conversation");
+        Project project = conversation.getProject();
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(project.getProjectId(), loggedInEmail);
+        if (!(boolean) projectMemberMap.get("isValid")) {
+
+            throw new ProjectMemberNotFoundException("No  member found with project id :" + project.getId() + " and email " + loggedInEmail);
+        }
+        try {
+
+            project.getProjectConversations().remove(conversation);
+            projectConversationRepository.delete(conversation);
+        } catch (Exception ex) {
+            throw new ConversationNotFoundException("No conversation found with id  " + id);
+        }
+
+
+        return new ResponseEntity<>("MISSION CONVERSATION DELETED SUCCESSFULLY", HttpStatus.ACCEPTED);
+
+    }
+
+    @Override
+    public ResponseEntity<?> addComment(CommentDto commentDto, Long id, String loggedInEmail) {
+
+        HashMap<String, Object> userMap = isValidUser2(loggedInEmail);
+        if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(loggedInEmail + " is not a valid user ");
+        User user = (User) userMap.get("user");
+
+        HashMap<String, Object> conversationMap = isValidConversation(id);
+        if (!(boolean) conversationMap.get("isValid"))
+            throw new ConversationNotFoundException(" No Conversation found with  id :" + id);
+        ProjectConversation conversation = (ProjectConversation) conversationMap.get("conversation");
+        Project project = conversation.getProject();
+
+        HashMap<String, Object> projectMemberMap = isValidProjectMember(project.getProjectId(), loggedInEmail);
+        if (!(boolean) projectMemberMap.get("isValid")) {
+
+            throw new ProjectMemberNotFoundException("No  member found with project id :" + project.getId() + " and email " + loggedInEmail);
+        }
+
+
+        ModelMapper mapper = new ModelMapper();
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ProjectComment comment = mapper.map(commentDto, ProjectComment.class);
+        comment.setAddedBy(loggedInEmail);
+        comment.setAddedOn(new java.util.Date());
+        comment.setProjectConversation(conversation);
+        comment.setAddedByImage(user.getImageUrl());
+
+        LocalDate localDate = new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        comment.setMonth(localDate.getMonthValue());
+        comment.setDate(localDate.getDayOfMonth());
+
+        conversation.addComment(comment);
+//        conversationRepository.save(conversation);
+
+
+        return new ResponseEntity<>(projectCommentRepository.save(comment), HttpStatus.ACCEPTED);
+
+
+    }
+
+    public HashMap<String, Object> isValidUser2(String email) {
+
+        HashMap<String, Object> result = new HashMap<>();
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) {
+            result.put("isValid", true);
+            result.put("user", optionalUser.get());
+            return result;
+        }
+        result.put("isValid", false);
+        return result;
+    }
+    public boolean isValidUser(String email) {
+
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isPresent()) return true;
+        return false;
+    }
+    private boolean isValidMember(String projectId, String loggedInEmail) {
+
+        long count=memberRepository.countByProjectProjectIdAndUserEmail(projectId,loggedInEmail);
+
+        if(count>0) return true;
+        return false;
+    }
     public HashMap<String ,Object> isValidProjectMember(String projectId,String email) {
         HashMap<String,Object> result= new HashMap<>();
         Optional<Member> optionalMember = memberRepository.findByProjectProjectIdAndUserEmail(projectId,email);
@@ -809,6 +987,17 @@ public class ProjectServiceImpl implements IProjectService {
             return result;
         }
         result.put("isValid",false);
+        return result;
+    }
+    public HashMap<String, Object> isValidConversation(Long id) {
+        HashMap<String, Object> result = new HashMap<>();
+        Optional<ProjectConversation> optionalConversation = projectConversationRepository.findById(id);
+        if (optionalConversation.isPresent()) {
+            result.put("isValid", true);
+            result.put("conversation", optionalConversation.get());
+            return result;
+        }
+        result.put("isValid", false);
         return result;
     }
 
