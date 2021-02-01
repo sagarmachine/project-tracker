@@ -5,13 +5,16 @@ import com.highbrowape.demo.dto.input.*;
 import com.highbrowape.demo.entity.Authority;
 import com.highbrowape.demo.entity.Status;
 import com.highbrowape.demo.service.IMissionService;
+import com.highbrowape.demo.service.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.TimeZone;
 
 @RestController
 @RequestMapping("/api/v1/mission")
@@ -19,6 +22,9 @@ public class MissionController {
 
     @Autowired
     IMissionService missionService;
+
+    @Autowired
+    INotificationService  notificationService;
 
 
     @PostMapping("/level/1/{id}")
@@ -134,8 +140,12 @@ public class MissionController {
         return missionService.updateObjectiveStatus(id,value,principal.getName());
     }
 
-
-
+//setting time zone to IST (default UTC)
+    @PostConstruct
+    public void init(){
+        // Setting Spring Boot SetTimeZone
+        TimeZone.setDefault(TimeZone.getTimeZone("IST"));
+    }
 
     @PostMapping("/{id}/conversation")
     public  ResponseEntity<?> startConversationToMission(@PathVariable("id")String id,@Valid @RequestBody ConversationDto conversationDto, Principal principal){
@@ -174,6 +184,11 @@ return missionService.removeComment(id,principal.getName());
     }
 
 
+
+    @GetMapping("/{missionId}/notification")
+    ResponseEntity<?> getMissionNotification (@PathVariable("missionId")String  missionId){
+        return notificationService.getMissionNotifications(missionId);
+    }
 
 
 }

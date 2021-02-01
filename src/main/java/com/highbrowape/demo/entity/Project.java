@@ -69,23 +69,36 @@ public class Project {
 //    Set<MemberInsight> memberInsights= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    @JsonIgnore
     Set<Member> members= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    @JsonIgnore
     Set<ProjectLink> projectLinks= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    @JsonIgnore
     Set<ProjectNote> projectNotes= new HashSet<>();
 
     @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL})
+    @JsonIgnore
     Set<Mission> missions= new HashSet<>();
 
+    @OneToMany(mappedBy = "project",cascade = {CascadeType.ALL},fetch = FetchType.EAGER)
+    @JsonIgnore
+    Set<ProjectNotification> projectNotifications= new HashSet<>();
 
 
 //    public void addUserProjectObjectiveInsight(MemberInsight memberInsight){
 //        memberInsights.add(memberInsight);
 //        memberInsight.setProject(this);
 //    }
+
+    public void addProjectNotification(ProjectNotification projectNotification){
+        projectNotifications.add(projectNotification);
+        projectNotification.setProject(this);
+    }
+
 
     public void addMember(Member member){
         members.add(member);

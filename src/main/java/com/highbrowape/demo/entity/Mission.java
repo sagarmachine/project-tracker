@@ -29,7 +29,7 @@ public class Mission implements Serializable {
     @Column(nullable = false)
     String name;
 
-    @Column(nullable = false,unique=true)
+    @Column(nullable = false, unique = true)
     String missionId;
 
     @Column(nullable = false)
@@ -45,8 +45,6 @@ public class Mission implements Serializable {
     @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
-
-
 
 
     @Enumerated(EnumType.STRING)
@@ -74,7 +72,7 @@ public class Mission implements Serializable {
     @JsonIgnore
     Mission missionParent;
 
-    @OneToMany(mappedBy = "missionParent",cascade = {CascadeType.REMOVE})
+    @OneToMany(mappedBy = "missionParent", cascade = {CascadeType.REMOVE})
     Set<Mission> missions;
 
     @ManyToOne
@@ -83,25 +81,34 @@ public class Mission implements Serializable {
     Project project;
 
 
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL)
+    @JsonIgnore
+    List<MissionMember> missionMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = CascadeType.ALL)
-    List<MissionMember> missionMembers=new ArrayList<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<Note> missionNotes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Note> missionNotes= new ArrayList<>();
-
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Link> missionLinks=new ArrayList<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<Link> missionLinks = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Progress> progress= new ArrayList<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<Progress> progress = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Objective> objectives= new ArrayList<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<Objective> objectives = new ArrayList<>();
 
-    @OneToMany(mappedBy = "mission",cascade = {CascadeType.REMOVE})
-    List<Conversation> conversations= new ArrayList<>();
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<Conversation> conversations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<MissionNotification> missionNotifications = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "mission",cascade =CascadeType.REMOVE)
 //    Set<MissionMemberInsight> missionMemberInsights= new HashSet<>();
@@ -112,30 +119,39 @@ public class Mission implements Serializable {
 //        missionMemberInsight.setMission(this);
 //    }
 
-    public void addMissionMember(MissionMember missionMember){
+    public void addMissionMember(MissionMember missionMember) {
         missionMembers.add(missionMember);
         missionMember.setMission(this);
     }
 
-    public void addLink(Link link){
+    public void addLink(Link link) {
         missionLinks.add(link);
         link.setMission(this);
     }
-    public void addNote(Note note){
+
+    public void addNote(Note note) {
         missionNotes.add(note);
         note.setMission(this);
     }
-    public void addConversations(Conversation conversation){
+
+    public void addConversations(Conversation conversation) {
         conversations.add(conversation);
         conversation.setMission(this);
     }
-    public void addObjective(Objective objective){
+
+    public void addObjective(Objective objective) {
         objectives.add(objective);
         objective.setMission(this);
     }
-    public void addProgress(Progress progress){
+
+    public void addProgress(Progress progress) {
         this.progress.add(progress);
         progress.setMission(this);
+    }
+
+    public void addNotification(MissionNotification missionNotification) {
+        this.missionNotifications.add(missionNotification);
+        missionNotification.setMission(this);
     }
 }
 
