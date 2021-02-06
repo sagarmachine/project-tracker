@@ -64,4 +64,13 @@ public interface IProjectService {
      ResponseEntity<?> updateLinkOfProject( Long id, LinkDto linkDto, String loggedInEmail);
      ResponseEntity<?> removeLinkFromProject( Long id, String loggedInEmail);
 
+    ResponseEntity<?> addProjectConversation(ConversationDto conversationDto, String id, String name);
+
+    ResponseEntity<?> getConversation(Long id, String name);
+
+    ResponseEntity<?> getProjectConversations(String id, String name);
+
+    ResponseEntity<?> removeConversation(Long id, String name);
+
+    ResponseEntity<?> addComment(CommentDto commentDto, Long id, String name);
 }

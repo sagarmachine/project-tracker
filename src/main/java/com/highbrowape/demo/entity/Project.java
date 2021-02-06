@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -38,7 +39,7 @@ public class Project {
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date addedOn;
 
-    @CreationTimestamp
+    @UpdateTimestamp
     @JsonFormat(pattern = "yyyy-MM-dd")
     Date updatedOn;
 
@@ -63,6 +64,9 @@ public class Project {
     @JoinColumn
     ProjectInsight projectInsight;
 
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.REMOVE})
+    @JsonIgnore
+    List<ProjectConversation> projectConversations = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "project",cascade =CascadeType.REMOVE)
 //    Set<MemberInsight> memberInsights= new HashSet<>();
@@ -116,7 +120,10 @@ public class Project {
         missions.add(mission);
         mission.setProject(this);
     }
-
+    public void addProjectConversations(ProjectConversation conversation) {
+        projectConversations.add(conversation);
+        conversation.setProject(this);
+    }
 
 
 }

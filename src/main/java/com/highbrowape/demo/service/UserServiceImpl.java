@@ -70,9 +70,11 @@ public class UserServiceImpl implements IUserService {
 
         User user = mapper.map(userRegister,User.class);
 
+
         user.setPassword(passwordEncoder.encode((user.getPassword() == null) ? "123" : user.getPassword()));
         user.setFirstName(user.getFirstName());
         user.setLastName(user.getLastName());
+
 
 
         UserInsights userInsights = new UserInsights();
