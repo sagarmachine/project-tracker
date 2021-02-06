@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserInteractionRepository extends JpaRepository<UserInteraction,Long> {
 
-    boolean existsByDateAndMonthAndYearAndUser(int date, int month, int year, User user);
+    boolean existsByDateAndMonthAndYearAndUserEmail(int date, int month, int year, String user);
 Optional<UserInteraction> findByDateAndMonthAndYearAndUser(int date, int month, int year, User user);
 
 List<UserInteraction> findByUserEmail(String email);

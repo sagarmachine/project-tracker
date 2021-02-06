@@ -27,4 +27,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query(value="select count(email) from User where email like %:firstName% OR (firstName like %:firstName% AND lastName like %:lastName%) ")
     Integer countEmailByName(String firstName,String lastName);
 
+
 }

@@ -288,7 +288,10 @@ public class ProjectServiceImpl implements IProjectService {
             long totalMembers=(long)memberRepository.countByProject(p);
             project.setTotalMembers(totalMembers);
             project.setTotalMissions(p.getMissions().size());
+            project.setMissions(missionRepository.findByProjectProjectIdAndMissionMembersMember(p.getProjectId(),memberRepository.findByProjectAndUserEmail(p,loggedInEmail).get()));
+            project.setProjectInsight(p.getProjectInsight());
             projectList.add(project);
+
         }
         HashMap<String,Object> result = new HashMap<>();
         result.put("totalPages",new Double(totalPages));
