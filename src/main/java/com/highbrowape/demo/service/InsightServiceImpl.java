@@ -3,6 +3,7 @@ package com.highbrowape.demo.service;
 import com.highbrowape.demo.dto.output.UserCommentChartData;
 import com.highbrowape.demo.entity.*;
 import com.highbrowape.demo.repository.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class InsightServiceImpl implements IInsightService {
 
 
@@ -416,8 +418,9 @@ public class InsightServiceImpl implements IInsightService {
         int year = localDate.getYear();
         int day = localDate.getDayOfWeek().getValue();
 
+        log.error(date+" "+month+" "+year+" "+email+" "+userInteractionRepository.existsByDateAndMonthAndYearAndUserEmail(date, month, year,email));
 
-        if (userInteractionRepository.existsByDateAndMonthAndYearAndUser(date, month, year, userRepository.findByEmail(email).get())) {
+        if (userInteractionRepository.existsByDateAndMonthAndYearAndUserEmail(date, month, year,email)) {
 
             UserInteraction userInteraction = userInteractionRepository.findByDateAndMonthAndYearAndUser(date, month, year, userRepository.findByEmail(email).get()).get();
             userInteraction.setCount(userInteraction.getCount() + 1);

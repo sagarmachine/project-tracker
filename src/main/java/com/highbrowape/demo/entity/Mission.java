@@ -99,7 +99,7 @@ public class Mission implements Serializable {
     List<Progress> progress = new ArrayList<>();
 
     @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})
-    @JsonIgnore
+
     List<Objective> objectives = new ArrayList<>();
 
     @OneToMany(mappedBy = "mission", cascade = {CascadeType.REMOVE})

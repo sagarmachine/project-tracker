@@ -7,8 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Synchronize;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -16,7 +19,8 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 
-public class UserInteraction {
+@Transactional
+public class UserInteraction implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

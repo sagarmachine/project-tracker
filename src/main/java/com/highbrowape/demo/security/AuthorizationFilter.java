@@ -51,6 +51,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 context.setAuthentication(usernamePasswordAuthenticationToken);
                 SecurityContextHolder.setContext(context);
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                System.out.println("Authentication Filter ");
                 insightService.addUserInteraction(user.getUsername(),1);
             }
         }
