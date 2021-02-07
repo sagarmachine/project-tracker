@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-
+import java.util.Objects;
 
 
 @Getter
@@ -29,6 +29,18 @@ public class MeetingMember {
     @Column(nullable = false)
     String imagUrl;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MeetingMember)) return false;
+        MeetingMember that = (MeetingMember) o;
+        return Objects.equals(getEmail(), that.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getEmail());
+    }
 }
 
 
