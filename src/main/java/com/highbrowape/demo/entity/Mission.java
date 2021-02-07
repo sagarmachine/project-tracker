@@ -110,6 +110,9 @@ public class Mission implements Serializable {
     @JsonIgnore
     List<MissionNotification> missionNotifications = new ArrayList<>();
 
+    @OneToOne(mappedBy = "mission")
+    MissionMeeting missionMeeting;
+
 //    @OneToMany(mappedBy = "mission",cascade =CascadeType.REMOVE)
 //    Set<MissionMemberInsight> missionMemberInsights= new HashSet<>();
 //
