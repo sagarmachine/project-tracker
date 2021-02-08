@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MeetingServiceImpl implements IMeetingService {
@@ -56,15 +57,15 @@ public class MeetingServiceImpl implements IMeetingService {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MissionMeeting missionMeeting = mapper.map(meetingDto, MissionMeeting.class);
 
-        DateFormat dform = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-        Date obj = new Date();
-        missionMeeting.setPassword(dform.format(obj)+"");
-
+        String uuid= UUID.randomUUID().toString();
+        missionMeeting.setPassword(uuid);
         missionMeeting.setAddedBy(email);
         missionMeeting.setAddedOn(new java.util.Date());
         missionMeeting.setMission(mission);
         missionMeeting.setName(mission.getProject().getProjectName()+" "+mission.getName()+" "+mission.getMissionId()+" "+email+" "+new java.util.Date());
 
+        Optional<MissionMeeting> missionMeetingOptional=missionMeetingRepository.findByMission(mission);
+        if(missionMeetingOptional.isPresent()) missionMeetingRepository.delete(missionMeetingOptional.get());
 
         return new ResponseEntity<>(missionMeetingRepository.save(missionMeeting), HttpStatus.ACCEPTED);
     }
@@ -91,7 +92,7 @@ public class MeetingServiceImpl implements IMeetingService {
     }
 
     @Override
-    public ResponseEntity<?> addMemberToMissionMeeting(Long id, String email, MeetingMemberDto meetingMemberDto) {
+    public ResponseEntity<?> addMemberToMissionMeeting(Long id, String email) {
         HashMap<String, Object> userMap = isValidUser(email);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(email + " is not a valid user ");
         User user = (User) userMap.get("user");
@@ -114,6 +115,7 @@ public class MeetingServiceImpl implements IMeetingService {
             throw new MemberNotFoundException(email + " is not a member of the project ");
 
 
+        MeetingMemberDto meetingMemberDto = new MeetingMemberDto(user.getEmail(),user.getFirstName()+" "+user.getLastName(),user.getImageUrl());
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MeetingMember meetingMember = mapper.map(meetingMemberDto, MeetingMember.class);
@@ -125,7 +127,7 @@ public class MeetingServiceImpl implements IMeetingService {
     }
 
     @Override
-    public ResponseEntity<?> removeMemberFromMissionMeeting(Long id, String email, MeetingMemberDto meetingMemberDto) {
+    public ResponseEntity<?> removeMemberFromMissionMeeting(Long id, String email) {
         HashMap<String, Object> userMap = isValidUser(email);
         if (!(boolean) userMap.get("isValid")) throw new UserNotFoundException(email + " is not a valid user ");
         User user = (User) userMap.get("user");
@@ -146,7 +148,7 @@ public class MeetingServiceImpl implements IMeetingService {
         if (!(boolean) memberMap.get("isValid"))
             throw new MemberNotFoundException(email + " is not a member of the project ");
 
-
+        MeetingMemberDto meetingMemberDto = new MeetingMemberDto(user.getEmail(),user.getFirstName()+" "+user.getLastName(),user.getImageUrl());
         ModelMapper mapper = new ModelMapper();
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         MeetingMember meetingMember = mapper.map(meetingMemberDto, MeetingMember.class);

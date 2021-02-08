@@ -9,9 +9,9 @@ public interface IMeetingService {
 
     ResponseEntity<?> getMissionMeeting(String id, String email);
 
-    ResponseEntity<?> addMemberToMissionMeeting(Long id, String email, MeetingMemberDto meetingMemberDto);
+    ResponseEntity<?> addMemberToMissionMeeting(Long id, String email);
 
-    ResponseEntity<?> removeMemberFromMissionMeeting(Long id, String email, MeetingMemberDto meetingMemberDto);
+    ResponseEntity<?> removeMemberFromMissionMeeting(Long id, String email);
 
     ResponseEntity<?> deleteMissionMeeting(Long id, String email);
 }

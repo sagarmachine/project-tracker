@@ -5,6 +5,7 @@ import lombok.Data;
 
 
 @Data
+
 public class MeetingMemberDto {
 
 
@@ -14,5 +15,9 @@ public class MeetingMemberDto {
 
     String imageUrl;
 
-
+    public MeetingMemberDto(String email, String name, String imageUrl) {
+        this.email = email;
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
 }

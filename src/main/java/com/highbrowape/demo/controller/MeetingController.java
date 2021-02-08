@@ -34,18 +34,18 @@ public class MeetingController {
 
     //meeting id
     @PutMapping("/mission/add/{id}")
-    public ResponseEntity<?> addMemberToMissionMeeting(@PathVariable Long id, Principal principal, MeetingMemberDto meetingMemberDto){
+    public ResponseEntity<?> addMemberToMissionMeeting(@PathVariable Long id, Principal principal){
 
         String email=principal.getName();
-        return meetingService.addMemberToMissionMeeting(id,email,meetingMemberDto);
+        return meetingService.addMemberToMissionMeeting(id,email);
     }
 
    // meeting id
     @PutMapping("/mission/remove/{id}")
-    public ResponseEntity<?>  removeMemberFromMissionMeeting(@PathVariable Long id, Principal principal,MeetingMemberDto meetingMemberDto){
+    public ResponseEntity<?>  removeMemberFromMissionMeeting(@PathVariable Long id, Principal principal){
 
         String email=principal.getName();
-        return meetingService.removeMemberFromMissionMeeting(id,email,meetingMemberDto);
+        return meetingService.removeMemberFromMissionMeeting(id,email);
     }
 
     //meeting id
